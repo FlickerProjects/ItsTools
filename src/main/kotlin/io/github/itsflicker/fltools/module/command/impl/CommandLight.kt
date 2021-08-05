@@ -17,22 +17,41 @@ import taboolib.module.nms.type.LightType
  */
 object CommandLight {
 
-    @CommandBody
-    val create = subCommand {
-        // type
-        dynamic {
-            suggestion<Player> { _, _ ->
-                listOf("SKY", "BLOCK", "BOTH")
-            }
-            // level
+    val command = subCommand {
+        literal("create") {
+            // type
             dynamic {
                 suggestion<Player> { _, _ ->
-                    (0..15).asList()
+                    listOf("SKY", "BLOCK", "BOTH")
                 }
-                execute<Player> { sender, context, argument ->
-                    sender.getTargetBlock(null, 50).createLight(
-                        argument.toInt(),
-                        when(context.argument(-1)) {
+                // level
+                dynamic {
+                    suggestion<Player> { _, _ ->
+                        (1..15).map { it.toString() }
+                    }
+                    execute<Player> { sender, context, argument ->
+                        sender.getTargetBlock(null, 50).createLight(
+                            argument.toInt(),
+                            when(context.argument(-1)) {
+                                "SKY" -> LightType.SKY
+                                "BLOCK" -> LightType.BLOCK
+                                "BOTH" -> LightType.ALL
+                                else -> LightType.ALL
+                            }
+                        )
+                    }
+                }
+            }
+        }
+        literal("deleet") {
+            // type
+            dynamic {
+                suggestion<Player> { _, _ ->
+                    listOf("SKY", "BLOCK", "BOTH")
+                }
+                execute<Player> { sender, _, argument ->
+                    sender.getTargetBlock(null, 50).deleteLight(
+                        when(argument) {
                             "SKY" -> LightType.SKY
                             "BLOCK" -> LightType.BLOCK
                             "BOTH" -> LightType.ALL
@@ -40,26 +59,6 @@ object CommandLight {
                         }
                     )
                 }
-            }
-        }
-    }
-
-    @CommandBody
-    val delete = subCommand {
-        // type
-        dynamic {
-            suggestion<Player> { _, _ ->
-                listOf("SKY", "BLOCK", "BOTH")
-            }
-            execute<Player> { sender, _, argument ->
-                sender.getTargetBlock(null, 50).deleteLight(
-                    when(argument) {
-                        "SKY" -> LightType.SKY
-                        "BLOCK" -> LightType.BLOCK
-                        "BOTH" -> LightType.ALL
-                        else -> LightType.ALL
-                    }
-                )
             }
         }
     }

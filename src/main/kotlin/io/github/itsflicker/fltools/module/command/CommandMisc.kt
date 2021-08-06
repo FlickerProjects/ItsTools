@@ -18,7 +18,7 @@ import java.util.*
  * @author wlys
  * @since 2021/8/3 15:20
  */
-@CommandHeader("flmisc", ["fm"], permission = "fltools.access")
+@CommandHeader("flmisc", ["fm"], "FlTools杂项命令（仅供娱乐）", permission = "fltools.access")
 object CommandMisc {
 
     @CommandBody(permission = "fltools.command.makemeleehostile")

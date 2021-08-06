@@ -1,6 +1,7 @@
 package io.github.itsflicker.fltools.api
 
 import org.bukkit.entity.LivingEntity
+import org.bukkit.entity.Player
 import taboolib.module.nms.nmsProxy
 
 /**
@@ -19,6 +20,8 @@ abstract class NMS {
     abstract fun addTargetAi(entity: LivingEntity,  priority: Int, pathfinderGoal: Any)
 
     abstract fun makeMeleeHostile(entity: LivingEntity, damage: Double = 2.0)
+
+    abstract fun sendResourcePack(player: Player)
 
     companion object {
 

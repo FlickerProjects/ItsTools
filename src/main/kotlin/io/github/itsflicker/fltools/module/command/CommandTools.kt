@@ -14,7 +14,7 @@ import taboolib.common.platform.subCommand
  * @author wlys
  * @since 2021/7/31 21:55
  */
-@CommandHeader("fltools", ["ft"], "FlTools命令", permission = "fltools.access")
+@CommandHeader("fltools", ["ft"], "FlTools主命令", permission = "fltools.access")
 object CommandTools {
 
     @CommandBody(permission = "fltools.command.light")

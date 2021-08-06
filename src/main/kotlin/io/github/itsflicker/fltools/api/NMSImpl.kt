@@ -1,5 +1,7 @@
 package io.github.itsflicker.fltools.api
 
+import io.github.itsflicker.fltools.Settings
+import net.minecraft.network.protocol.game.PacketPlayOutResourcePackSend
 import net.minecraft.world.entity.EntityCreature
 import net.minecraft.world.entity.EntityInsentient
 import net.minecraft.world.entity.ai.attributes.AttributeBase
@@ -12,8 +14,13 @@ import net.minecraft.world.entity.ai.goal.target.PathfinderGoalNearestAttackable
 import net.minecraft.world.entity.player.EntityHuman
 import org.bukkit.craftbukkit.v1_17_R1.entity.CraftLivingEntity
 import org.bukkit.entity.LivingEntity
+import org.bukkit.entity.Player
 import taboolib.common.reflect.Reflex.Companion.getProperty
 import taboolib.common.reflect.Reflex.Companion.invokeMethod
+import taboolib.common.reflect.Reflex.Companion.setProperty
+import taboolib.common.reflect.Reflex.Companion.unsafeInstance
+import taboolib.module.nms.MinecraftVersion
+import taboolib.module.nms.sendPacket
 
 /**
  * NMSImpl
@@ -50,5 +57,20 @@ class NMSImpl : NMS() {
         // add target selector
         addTargetAi(entity, 1, PathfinderGoalHurtByTarget(getEntityInsentient(entity) as EntityCreature))
         addTargetAi(entity, 2, PathfinderGoalNearestAttackableTarget(getEntityInsentient(entity) as EntityInsentient, EntityHuman::class.java, true))
+    }
+
+    override fun sendResourcePack(player: Player) {
+        if (MinecraftVersion.isUniversal) {
+            player.sendPacket(PacketPlayOutResourcePackSend::class.java.unsafeInstance().also {
+                it.setProperty("url", Settings.resUrl)
+                it.setProperty("hash", Settings.resHash)
+                it.setProperty("required", false)
+            })
+        } else {
+            player.sendPacket(PacketPlayOutResourcePackSend::class.java.unsafeInstance().also {
+                it.setProperty("a", Settings.resUrl)
+                it.setProperty("b", Settings.resHash)
+            })
+        }
     }
 }

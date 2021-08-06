@@ -1,7 +1,6 @@
 package io.github.itsflicker.fltools.module.listeners
 
-import io.github.itsflicker.fltools.FlTools
-import org.bukkit.event.player.PlayerInteractEntityEvent
+import io.github.itsflicker.fltools.Settings
 import org.bukkit.event.player.PlayerSwapHandItemsEvent
 import taboolib.common.LifeCycle
 import taboolib.common.platform.*
@@ -15,14 +14,13 @@ import java.util.concurrent.TimeUnit
  * @author wlys
  * @since 2021/8/4 20:42
  */
-@PlatformSide([Platform.BUKKIT])
 object Listeners {
 
     private var swapCoolDown: Baffle? = null
 
     @Awake(LifeCycle.ENABLE)
     fun reload() {
-        swapCoolDown = Baffle.of(FlTools.swapCoolDown, TimeUnit.MILLISECONDS)
+        swapCoolDown = Baffle.of(Settings.swapCoolDown, TimeUnit.MILLISECONDS)
     }
 
     @SubscribeEvent(priority = EventPriority.HIGHEST, ignoreCancelled = true)
@@ -31,15 +29,15 @@ object Listeners {
         if (swapCoolDown!!.hasNext(player.name)) {
             val view = player.location.pitch
             if (player.isSneaking) {
-                player.chat(FlTools.sneakF)
+                player.chat(Settings.sneakF)
                 e.isCancelled = true
             }
             else if (view >= 80.0F) {
-                player.chat(FlTools.lookDownF)
+                player.chat(Settings.lookDownF)
                 e.isCancelled = true
             }
             else if (view <= -80.0F) {
-                player.chat(FlTools.lookUpF)
+                player.chat(Settings.lookUpF)
                 e.isCancelled = true
             }
         }

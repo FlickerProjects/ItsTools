@@ -1,5 +1,6 @@
 package io.github.itsflicker.fltools
 
+import io.github.itsflicker.fltools.Settings.config
 import io.github.itsflicker.fltools.module.Void
 import io.github.itsflicker.fltools.module.listeners.Listeners
 import org.bukkit.generator.ChunkGenerator
@@ -25,29 +26,6 @@ object FlTools : Plugin(), BukkitWorldGenerator {
     val plugin by lazy {
         BukkitPlugin.getInstance()
     }
-
-    @Config(migrate = true)
-    lateinit var config: SecuredFile
-
-    @ConfigNode(value = "replacing-seed")
-    var replacingSeed = 1145141919810
-        private set
-
-    @ConfigNode(value = "F-cooldown")
-    var swapCoolDown = 500L
-        private set
-
-    @ConfigNode(bind = "sneak-F")
-    var sneakF = ""
-        private set
-
-    @ConfigNode(bind = "lookDown-F")
-    var lookDownF = ""
-        private set
-
-    @ConfigNode(bind = "lookUp-F")
-    var lookUpF = ""
-        private set
 
     override fun onEnable() {
         // bstats metrics

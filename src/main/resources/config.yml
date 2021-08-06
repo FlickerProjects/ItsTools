@@ -1,6 +1,11 @@
 replacing-seed: 1145141919810
 
-F-cooldown: 500
-sneak-F: ''
-lookDown-F: ''
-lookUp-F: ''
+Swap-Shortcut:
+  cooldown: 500 # ms
+  whenSneak: ''
+  whenLookDown: ''
+  whenLookUp: ''
+
+ResourcePack:
+  url: ''
+  hash: 'null'

@@ -1,10 +1,11 @@
 package io.github.itsflicker.fltools.module.listeners
 
-import io.github.itsflicker.fltools.FlTools
 import io.github.itsflicker.fltools.Settings
 import net.minecraft.network.protocol.game.PacketPlayInResourcePackStatus
 import net.minecraft.network.protocol.game.PacketPlayInResourcePackStatus.EnumResourcePackStatus.*
 import taboolib.common.platform.SubscribeEvent
+import taboolib.common.platform.adaptPlayer
+import taboolib.module.kether.KetherShell
 import taboolib.module.nms.MinecraftVersion
 import taboolib.module.nms.PacketReceiveEvent
 import taboolib.module.nms.PacketSendEvent
@@ -41,10 +42,10 @@ object PacketListener {
         if (e.packet.name == "PacketPlayInResourcePackStatus") {
             if (MinecraftVersion.isUniversal) {
                 when (e.packet.read<PacketPlayInResourcePackStatus.EnumResourcePackStatus>("action")) {
-                    SUCCESSFULLY_LOADED -> TODO()
-                    DECLINED -> TODO()
-                    FAILED_DOWNLOAD -> TODO()
-                    ACCEPTED -> TODO()
+                    SUCCESSFULLY_LOADED -> KetherShell.eval(Settings.rpLoaded, sender = adaptPlayer(e.player))
+                    DECLINED -> KetherShell.eval(Settings.rpDeclined, sender = adaptPlayer(e.player))
+                    FAILED_DOWNLOAD -> KetherShell.eval(Settings.rpFailedDownload, sender = adaptPlayer(e.player))
+                    ACCEPTED -> KetherShell.eval(Settings.rpAccepted, sender = adaptPlayer(e.player))
                     null -> error("ResourcePackStatus shouldn't be null!")
                 }
             }

@@ -43,4 +43,20 @@ object Settings {
     @ConfigNode(bind = "ResourcePack.hash")
     var resHash = "null"
         private set
+
+    @ConfigNode(bind = "ResourcePack.onLoaded")
+    var rpLoaded = listOf("")
+        private set
+
+    @ConfigNode(bind = "ResourcePack.onDeclined")
+    var rpDeclined = listOf("")
+        private set
+
+    @ConfigNode(bind = "ResourcePack.onAccepted")
+    var rpAccepted = listOf("")
+        private set
+
+    @ConfigNode(bind = "ResourcePack.onFailedDownload")
+    var rpFailedDownload = listOf("")
+        private set
 }

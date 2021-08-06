@@ -7,9 +7,6 @@ import org.bukkit.generator.ChunkGenerator
 import taboolib.common.platform.Platform
 import taboolib.common.platform.Plugin
 import taboolib.common5.FileWatcher
-import taboolib.module.configuration.Config
-import taboolib.module.configuration.ConfigNode
-import taboolib.module.configuration.SecuredFile
 import taboolib.module.metrics.Metrics
 import taboolib.platform.BukkitPlugin
 import taboolib.platform.BukkitWorldGenerator
@@ -37,6 +34,7 @@ object FlTools : Plugin(), BukkitWorldGenerator {
     }
 
     override fun getDefaultWorldGenerator(worldName: String, name: String?): ChunkGenerator {
+        // void world generator
         return Void()
     }
 

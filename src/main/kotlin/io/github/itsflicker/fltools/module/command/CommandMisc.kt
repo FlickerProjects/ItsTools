@@ -23,8 +23,25 @@ object CommandMisc {
 
     @CommandBody(permission = "fltools.command.makemeleehostile")
     val makeMeleeHostile = subCommand {
+        // uuid
         dynamic {
+            // damage
             dynamic(optional = true) {
+                // speed
+                dynamic(optional = true) {
+                    suggestion<Player>(uncheck = true) { _, _ ->
+                        listOf("0.5", "1.0", "1.5")
+                    }
+                    restrict<Player> { _, context, argument ->
+                        Coerce.asDouble(context.argument(-1)).isPresent &&
+                        Coerce.asDouble(argument).isPresent
+                    }
+                    execute<Player> { _, context, argument ->
+                        (Bukkit.getEntity(UUID.fromString(context.argument(-2))) as? LivingEntity)?.let {
+                            NMS.INSTANCE.makeMeleeHostile(it, Coerce.toDouble(context.argument(-1)), Coerce.toDouble(argument))
+                        } ?: run {  }
+                    }
+                }
                 suggestion<Player>(uncheck = true) { _, _ ->
                     listOf("1.0", "2.0", "3.0", "4.0", "5.0")
                 }

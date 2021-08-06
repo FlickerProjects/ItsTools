@@ -1,11 +1,29 @@
 replacing-seed: 1145141919810
 
 Swap-Shortcut:
+  # F快捷键冷却
   cooldown: 500 # ms
+  # Shift+F
   whenSneak: ''
+  # 低头时F
   whenLookDown: ''
+  # 抬头时F
   whenLookUp: ''
 
 ResourcePack:
+  # 资源包url
   url: ''
+  # 资源包hash 如果不用验证保持默认即可
   hash: 'null'
+  # 资源包成功加载后动作
+  onLoaded:
+    - ''
+  # 拒绝资源包后动作
+  onDeclined:
+    - 'command *"kick {{ sender }} §7请将服务器资源包设置为§f§n启用" as console' # 踢出玩家
+  # 接受资源包后动作
+  onAccepted:
+    - ''
+  # 资源包下载失败时动作
+  onFailedDownload:
+    - 'tell *"§c资源包下载失败!"'

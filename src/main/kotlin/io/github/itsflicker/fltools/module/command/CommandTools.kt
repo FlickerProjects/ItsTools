@@ -2,6 +2,7 @@ package io.github.itsflicker.fltools.module.command
 
 import io.github.itsflicker.fltools.module.command.impl.CommandLight
 import io.github.itsflicker.fltools.module.command.impl.CommandLore
+import io.github.itsflicker.fltools.module.command.impl.CommandSendResourcePack
 import io.github.itsflicker.fltools.module.command.impl.CommandSendToast
 import taboolib.common.platform.CommandBody
 import taboolib.common.platform.CommandHeader
@@ -25,5 +26,8 @@ object CommandTools {
 
     @CommandBody(permission = "fltools.command.lore")
     val lore = CommandLore.command
+
+    @CommandBody(permission = "fltools.command.sendresourcepack")
+    val sendResourcePack = CommandSendResourcePack.command
 
 }

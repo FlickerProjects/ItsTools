@@ -43,7 +43,7 @@ class NMSImpl : NMS() {
         (getEntityInsentient(entity) as? EntityInsentient)?.targetSelector?.a(priority, pathfinderGoal as PathfinderGoal)
     }
 
-    override fun makeMeleeHostile(entity: LivingEntity, damage: Double) {
+    override fun makeMeleeHostile(entity: LivingEntity, damage: Double, speed: Double) {
         // add generic:attack_damage attribute
         (getEntityInsentient(entity) as EntityInsentient).attributeMap
             .getProperty<HashMap<AttributeBase, AttributeModifiable>>("b")!![GenericAttributes.ATTACK_DAMAGE] =
@@ -53,7 +53,7 @@ class NMSImpl : NMS() {
             .getAttributeInstance(GenericAttributes.ATTACK_DAMAGE)!!
             .value = damage
         // add goal selector
-        addGoalAi(entity, 2, PathfinderGoalMeleeAttack(getEntityInsentient(entity) as EntityCreature, 1.0, false))
+        addGoalAi(entity, 2, PathfinderGoalMeleeAttack(getEntityInsentient(entity) as EntityCreature, speed, false))
         // add target selector
         addTargetAi(entity, 1, PathfinderGoalHurtByTarget(getEntityInsentient(entity) as EntityCreature))
         addTargetAi(entity, 2, PathfinderGoalNearestAttackableTarget(getEntityInsentient(entity) as EntityInsentient, EntityHuman::class.java, true))

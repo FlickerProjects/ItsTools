@@ -19,7 +19,7 @@ abstract class NMS {
 
     abstract fun addTargetAi(entity: LivingEntity,  priority: Int, pathfinderGoal: Any)
 
-    abstract fun makeMeleeHostile(entity: LivingEntity, damage: Double = 2.0)
+    abstract fun makeMeleeHostile(entity: LivingEntity, damage: Double = 2.0, speed: Double = 1.0)
 
     abstract fun sendResourcePack(player: Player)
 

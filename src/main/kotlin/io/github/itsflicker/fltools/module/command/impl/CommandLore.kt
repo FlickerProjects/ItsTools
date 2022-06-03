@@ -1,13 +1,11 @@
 package io.github.itsflicker.fltools.module.command.impl
 
 import org.bukkit.entity.Player
-import taboolib.common.platform.CommandBody
-import taboolib.common.platform.subCommand
+import taboolib.common.platform.command.subCommand
 import taboolib.common.util.addSafely
 import taboolib.common5.Coerce
 import taboolib.module.chat.colored
 import taboolib.platform.util.isAir
-import taboolib.platform.util.isNotAir
 import taboolib.platform.util.modifyLore
 
 /**
@@ -23,7 +21,7 @@ object CommandLore {
     val command = subCommand {
         literal("append") {
             // text
-            dynamic {
+            dynamic("text") {
                 execute<Player> { sender, _, argument ->
                     if (sender.itemInHand.isAir()) {
                         return@execute
@@ -36,7 +34,7 @@ object CommandLore {
         }
         literal("insert") {
             // line
-            dynamic {
+            dynamic("line") {
                 suggestion<Player>(uncheck = true) { sender, _ ->
                     (1..(sender.itemInHand.itemMeta?.lore?.size ?: 1)).map { it.toString() }
                 }
@@ -44,13 +42,13 @@ object CommandLore {
                     Coerce.asInteger(argument).isPresent
                 }
                 // text
-                dynamic {
+                dynamic("text") {
                     execute<Player> { sender, context, argument ->
                         if (sender.itemInHand.isAir()) {
                             return@execute
                         }
                         sender.itemInHand.modifyLore {
-                            addSafely(context.argument(-1)!!.toInt()-1, argument.colored(), "")
+                            addSafely(context.argument(-1).toInt() - 1, argument.colored(), "")
                         }
                     }
                 }
@@ -58,7 +56,7 @@ object CommandLore {
         }
         literal("pop") {
             // line
-            dynamic(optional = true) {
+            dynamic("line", optional = true) {
                 restrict<Player> { _, _, argument ->
                     Coerce.asInteger(argument).isPresent
                 }

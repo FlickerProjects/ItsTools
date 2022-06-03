@@ -1,14 +1,20 @@
 replacing-seed: 1145141919810
 
 Swap-Shortcut:
-  # F快捷键冷却
+  # F/Q快捷键冷却
   cooldown: 500 # ms
   # Shift+F
-  whenSneak: ''
+  whenSneakF: ''
   # 低头时F
-  whenLookDown: ''
+  whenLookDownF: ''
   # 抬头时F
-  whenLookUp: ''
+  whenLookUpF: ''
+  # Shift+Q
+  whenSneakQ: ''
+  # 低头时Q
+  whenLookDownQ: ''
+  # 抬头时Q
+  whenLookUpQ: ''
 
 ResourcePack:
   # 资源包url
@@ -20,7 +26,7 @@ ResourcePack:
     - ''
   # 拒绝资源包后动作
   onDeclined:
-    - 'command *"kick {{ sender }} §7请将服务器资源包设置为§f§n启用" as console' # 踢出玩家
+    - 'command inline "kick {{ sender }} §7请将服务器资源包设置为§f§n启用" as console' # 踢出玩家
   # 接受资源包后动作
   onAccepted:
     - ''

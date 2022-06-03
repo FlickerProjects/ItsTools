@@ -1,10 +1,8 @@
 package io.github.itsflicker.fltools.module.listeners
 
 import io.github.itsflicker.fltools.Settings
-import net.minecraft.network.protocol.game.PacketPlayInResourcePackStatus
-import net.minecraft.network.protocol.game.PacketPlayInResourcePackStatus.EnumResourcePackStatus.*
-import taboolib.common.platform.SubscribeEvent
-import taboolib.common.platform.adaptPlayer
+import taboolib.common.platform.event.SubscribeEvent
+import taboolib.common.platform.function.adaptPlayer
 import taboolib.module.kether.KetherShell
 import taboolib.module.nms.MinecraftVersion
 import taboolib.module.nms.PacketReceiveEvent
@@ -41,11 +39,11 @@ object PacketListener {
     fun receive(e: PacketReceiveEvent) {
         if (e.packet.name == "PacketPlayInResourcePackStatus") {
             if (MinecraftVersion.isUniversal) {
-                when (e.packet.read<PacketPlayInResourcePackStatus.EnumResourcePackStatus>("action")) {
-                    SUCCESSFULLY_LOADED -> KetherShell.eval(Settings.rpLoaded, sender = adaptPlayer(e.player))
-                    DECLINED -> KetherShell.eval(Settings.rpDeclined, sender = adaptPlayer(e.player))
-                    FAILED_DOWNLOAD -> KetherShell.eval(Settings.rpFailedDownload, sender = adaptPlayer(e.player))
-                    ACCEPTED -> KetherShell.eval(Settings.rpAccepted, sender = adaptPlayer(e.player))
+                when (e.packet.read<Any>("action")?.toString()) {
+                    "SUCCESSFULLY_LOADED" -> KetherShell.eval(Settings.rpLoaded, sender = adaptPlayer(e.player))
+                    "DECLINED" -> KetherShell.eval(Settings.rpDeclined, sender = adaptPlayer(e.player))
+                    "FAILED_DOWNLOAD" -> KetherShell.eval(Settings.rpFailedDownload, sender = adaptPlayer(e.player))
+                    "ACCEPTED" -> KetherShell.eval(Settings.rpAccepted, sender = adaptPlayer(e.player))
                     null -> error("ResourcePackStatus shouldn't be null!")
                 }
             }

@@ -1,12 +1,10 @@
 package io.github.itsflicker.fltools
 
-import io.github.itsflicker.fltools.Settings.config
 import io.github.itsflicker.fltools.module.Void
-import io.github.itsflicker.fltools.module.listeners.Listeners
 import org.bukkit.generator.ChunkGenerator
 import taboolib.common.platform.Platform
 import taboolib.common.platform.Plugin
-import taboolib.common5.FileWatcher
+import taboolib.module.configuration.createLocal
 import taboolib.module.metrics.Metrics
 import taboolib.platform.BukkitPlugin
 import taboolib.platform.BukkitWorldGenerator
@@ -20,26 +18,16 @@ import taboolib.platform.BukkitWorldGenerator
  */
 object FlTools : Plugin(), BukkitWorldGenerator {
 
-    val plugin by lazy {
-        BukkitPlugin.getInstance()
-    }
+    val plugin by lazy { BukkitPlugin.getInstance() }
+
+    val local by lazy { createLocal("data.yml") }
 
     override fun onEnable() {
-        // bstats metrics
         Metrics(12296, plugin.description.version, Platform.BUKKIT)
-        // config watcher
-        FileWatcher.INSTANCE.addSimpleListener(config.file) {
-            onReload()
-        }
+        local
     }
 
     override fun getDefaultWorldGenerator(worldName: String, name: String?): ChunkGenerator {
-        // void world generator
         return Void()
-    }
-
-    private fun onReload() {
-        config.reload()
-        Listeners.reload()
     }
 }

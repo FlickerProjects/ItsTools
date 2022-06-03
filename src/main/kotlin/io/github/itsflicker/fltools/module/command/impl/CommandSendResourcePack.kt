@@ -3,8 +3,8 @@ package io.github.itsflicker.fltools.module.command.impl
 import io.github.itsflicker.fltools.api.NMS
 import org.bukkit.Bukkit
 import taboolib.common.platform.ProxyCommandSender
-import taboolib.common.platform.onlinePlayers
-import taboolib.common.platform.subCommand
+import taboolib.common.platform.command.subCommand
+import taboolib.common.platform.function.onlinePlayers
 
 /**
  * CommandSendResourcePack
@@ -16,7 +16,7 @@ import taboolib.common.platform.subCommand
 object CommandSendResourcePack {
 
     val command = subCommand {
-        dynamic {
+        dynamic("player") {
             suggestion<ProxyCommandSender> { _, _ ->
                 onlinePlayers().map { it.name }
             }

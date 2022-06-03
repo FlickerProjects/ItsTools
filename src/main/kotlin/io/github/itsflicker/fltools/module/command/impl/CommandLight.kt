@@ -1,9 +1,7 @@
 package io.github.itsflicker.fltools.module.command.impl
 
 import org.bukkit.entity.Player
-import taboolib.common.platform.CommandBody
-import taboolib.common.platform.subCommand
-import taboolib.common.util.asList
+import taboolib.common.platform.command.subCommand
 import taboolib.module.nms.createLight
 import taboolib.module.nms.deleteLight
 import taboolib.module.nms.type.LightType
@@ -20,12 +18,12 @@ object CommandLight {
     val command = subCommand {
         literal("create") {
             // type
-            dynamic {
+            dynamic("type") {
                 suggestion<Player> { _, _ ->
                     listOf("SKY", "BLOCK", "BOTH")
                 }
                 // level
-                dynamic {
+                dynamic("level") {
                     suggestion<Player> { _, _ ->
                         (1..15).map { it.toString() }
                     }
@@ -43,9 +41,9 @@ object CommandLight {
                 }
             }
         }
-        literal("deleet") {
+        literal("delete") {
             // type
-            dynamic {
+            dynamic("type") {
                 suggestion<Player> { _, _ ->
                     listOf("SKY", "BLOCK", "BOTH")
                 }

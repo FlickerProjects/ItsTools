@@ -27,10 +27,10 @@ ResourcePack:
     # 拒绝资源包后动作
     onDeclined:
       - 'command inline "kick {{ sender }} §7请将服务器资源包设置为§f§n启用" as console' # 踢出玩家
-    # 接受资源包后动作
-    onAccepted: [ ]
     # 资源包下载失败时动作
     onFailedDownload:
       - 'tell "§c资源包下载失败!"'
+    # 接受资源包后动作
+    onAccepted: [ ]
     # 资源包移除时动作
     onRemoved: [ ]

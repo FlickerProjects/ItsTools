@@ -1,6 +1,7 @@
 package io.github.itsflicker.fltools.module.command.impl
 
 import dev.lone.itemsadder.api.ItemsAdder
+import io.github.itsflicker.fltools.Settings
 import io.github.itsflicker.fltools.api.NMS
 import io.github.itsflicker.fltools.module.resourcepack.ResourcePack
 import io.th0rgal.oraxen.OraxenPlugin
@@ -31,12 +32,12 @@ object CommandSendResourcePack {
             }
             dynamic("id") {
                 suggestion<ProxyCommandSender> { _, _ ->
-                    ResourcePack.packs.get().keys.toList()
+                    Settings.packs.get().keys.toList()
                 }
                 execute<ProxyCommandSender> { _, context, argument ->
                     val player = Bukkit.getPlayer(context.argument(-1))!!
                     ResourcePack.selected.remove(player.uniqueId)?.onRemoved?.let { KetherShell.eval(it, sender = adaptPlayer(player)) }
-                    val resourcePack = ResourcePack.packs.get()[argument]!!
+                    val resourcePack = Settings.packs.get()[argument]!!
                     when {
                         resourcePack.id.equals("itemsadder", ignoreCase = true) -> {
                             if (isItemsAdderHooked) {

@@ -6,9 +6,7 @@ import io.github.itsflicker.fltools.module.resourcepack.ResourcePack
 import org.bukkit.entity.Phantom
 import org.bukkit.entity.Player
 import org.bukkit.event.entity.CreatureSpawnEvent
-import org.bukkit.event.player.PlayerDropItemEvent
-import org.bukkit.event.player.PlayerResourcePackStatusEvent
-import org.bukkit.event.player.PlayerSwapHandItemsEvent
+import org.bukkit.event.player.*
 import taboolib.common.platform.event.EventPriority
 import taboolib.common.platform.event.SubscribeEvent
 import taboolib.common.platform.function.adaptPlayer
@@ -22,6 +20,16 @@ import taboolib.module.kether.KetherShell
  * @since 2021/8/4 20:42
  */
 object Listeners {
+
+    @SubscribeEvent
+    fun e(e: PlayerQuitEvent) {
+        ResourcePack.selected.remove(e.player.uniqueId)
+    }
+
+    @SubscribeEvent
+    fun e(e: PlayerKickEvent) {
+        ResourcePack.selected.remove(e.player.uniqueId)
+    }
 
     @SubscribeEvent(priority = EventPriority.HIGHEST, ignoreCancelled = true)
     fun e(e: PlayerSwapHandItemsEvent) {

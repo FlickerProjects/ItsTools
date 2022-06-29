@@ -17,10 +17,11 @@ import java.util.concurrent.TimeUnit
 object Settings {
 
     @Config(autoReload = true)
-    lateinit var CONF: Configuration
+    lateinit var conf: Configuration
+        private set
 
     @ConfigNode(value = "replacing-seed")
-    var replacingSeed = 1145141919810
+    var replacingSeed = 123456789
         private set
 
     @ConfigNode(value = "Swap-Shortcut.cooldown")
@@ -48,29 +49,5 @@ object Settings {
 
     @ConfigNode(value = "Swap-Shortcut.whenLookUpQ")
     var lookUpQ = ""
-        private set
-
-    @ConfigNode(value = "ResourcePack.url")
-    var resUrl = ""
-        private set
-
-    @ConfigNode(value = "ResourcePack.hash")
-    var resHash = "null"
-        private set
-
-    @ConfigNode(value = "ResourcePack.onLoaded")
-    var rpLoaded = listOf("")
-        private set
-
-    @ConfigNode(value = "ResourcePack.onDeclined")
-    var rpDeclined = listOf("")
-        private set
-
-    @ConfigNode(value = "ResourcePack.onAccepted")
-    var rpAccepted = listOf("")
-        private set
-
-    @ConfigNode(value = "ResourcePack.onFailedDownload")
-    var rpFailedDownload = listOf("")
         private set
 }

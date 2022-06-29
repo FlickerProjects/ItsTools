@@ -44,10 +44,14 @@ object DebugItem {
     }
 
     enum class Mode(val index: Int) {
+
+        NULL(-1),
+
         GET_ENTITY_UUID(0),
+
         NAVIGATE(1),
-        MAKE_MELEE_HOSTILE(2),
-        NULL(-1)
+
+        MAKE_MELEE_HOSTILE(2)
     }
 
     val negativeCache = ConcurrentHashMap<String, UUID>()

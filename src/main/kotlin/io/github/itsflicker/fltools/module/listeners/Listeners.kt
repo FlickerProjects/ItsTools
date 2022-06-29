@@ -2,10 +2,12 @@ package io.github.itsflicker.fltools.module.listeners
 
 import io.github.itsflicker.fltools.Settings
 import io.github.itsflicker.fltools.Settings.shortcutCoolDown
+import io.github.itsflicker.fltools.module.resourcepack.ResourcePack
 import org.bukkit.entity.Phantom
 import org.bukkit.entity.Player
 import org.bukkit.event.entity.CreatureSpawnEvent
 import org.bukkit.event.player.PlayerDropItemEvent
+import org.bukkit.event.player.PlayerResourcePackStatusEvent
 import org.bukkit.event.player.PlayerSwapHandItemsEvent
 import taboolib.common.platform.event.EventPriority
 import taboolib.common.platform.event.SubscribeEvent
@@ -70,6 +72,28 @@ object Listeners {
                     e.isCancelled = true
                     return
                 }
+            }
+        }
+    }
+
+    @SubscribeEvent
+    fun e(e: PlayerResourcePackStatusEvent) {
+        val player = e.player
+        val resourcePack = ResourcePack.selected[player.uniqueId] ?: return
+        when (e.status) {
+            PlayerResourcePackStatusEvent.Status.SUCCESSFULLY_LOADED -> {
+                resourcePack.onLoaded?.let { KetherShell.eval(it, sender = adaptPlayer(player)) }
+            }
+            PlayerResourcePackStatusEvent.Status.DECLINED -> {
+                ResourcePack.selected.remove(player.uniqueId)
+                resourcePack.onDeclined?.let { KetherShell.eval(it, sender = adaptPlayer(player)) }
+            }
+            PlayerResourcePackStatusEvent.Status.FAILED_DOWNLOAD -> {
+                ResourcePack.selected.remove(player.uniqueId)
+                resourcePack.onFailedDownload?.let { KetherShell.eval(it, sender = adaptPlayer(player)) }
+            }
+            PlayerResourcePackStatusEvent.Status.ACCEPTED -> {
+                resourcePack.onAccepted?.let { KetherShell.eval(it, sender = adaptPlayer(player)) }
             }
         }
     }

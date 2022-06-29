@@ -21,7 +21,7 @@ abstract class NMS {
 
     abstract fun makeMeleeHostile(entity: LivingEntity, damage: Double = 2.0, speed: Double = 1.0)
 
-    abstract fun sendResourcePack(player: Player)
+    abstract fun sendResourcePack(player: Player, url: String, hash: String)
 
     companion object {
 

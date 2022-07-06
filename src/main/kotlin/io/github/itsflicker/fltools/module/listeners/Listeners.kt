@@ -11,6 +11,7 @@ import taboolib.common.platform.event.EventPriority
 import taboolib.common.platform.event.SubscribeEvent
 import taboolib.common.platform.function.adaptPlayer
 import taboolib.module.kether.KetherShell
+import taboolib.module.kether.runKether
 
 /**
  * Listeners
@@ -23,12 +24,12 @@ object Listeners {
 
     @SubscribeEvent
     fun e(e: PlayerQuitEvent) {
-        ResourcePack.selected.remove(e.player.uniqueId)
+        ResourcePack.selected.remove(e.player.uniqueId)?.onRemoved?.let { runKether { KetherShell.eval(it, sender = adaptPlayer(e.player)) } }
     }
 
     @SubscribeEvent
     fun e(e: PlayerKickEvent) {
-        ResourcePack.selected.remove(e.player.uniqueId)
+        ResourcePack.selected.remove(e.player.uniqueId)?.onRemoved?.let { runKether { KetherShell.eval(it, sender = adaptPlayer(e.player)) } }
     }
 
     @SubscribeEvent(priority = EventPriority.HIGHEST, ignoreCancelled = true)
@@ -38,15 +39,15 @@ object Listeners {
             val view = player.location.pitch
             if (player.isSneaking) {
                 e.isCancelled = true
-                KetherShell.eval(Settings.sneakF, sender = adaptPlayer(player))
+                runKether { KetherShell.eval(Settings.sneakF, sender = adaptPlayer(player)) }
             }
             else if (view >= 80.0F) {
                 e.isCancelled = true
-                KetherShell.eval(Settings.lookDownF, sender = adaptPlayer(player))
+                runKether { KetherShell.eval(Settings.lookDownF, sender = adaptPlayer(player)) }
             }
             else if (view <= -80.0F) {
                 e.isCancelled = true
-                KetherShell.eval(Settings.lookUpF, sender = adaptPlayer(player))
+                runKether { KetherShell.eval(Settings.lookUpF, sender = adaptPlayer(player)) }
             }
         }
     }
@@ -58,15 +59,15 @@ object Listeners {
             val view = player.location.pitch
             if (player.isSneaking) {
                 e.isCancelled = true
-                KetherShell.eval(Settings.sneakQ, sender = adaptPlayer(player))
+                runKether { KetherShell.eval(Settings.sneakQ, sender = adaptPlayer(player)) }
             }
             else if (view >= 80.0F) {
                 e.isCancelled = true
-                KetherShell.eval(Settings.lookDownQ, sender = adaptPlayer(player))
+                runKether { KetherShell.eval(Settings.lookDownQ, sender = adaptPlayer(player)) }
             }
             else if (view <= -80.0F) {
                 e.isCancelled = true
-                KetherShell.eval(Settings.lookUpQ, sender = adaptPlayer(player))
+                runKether { KetherShell.eval(Settings.lookUpQ, sender = adaptPlayer(player)) }
             }
         }
     }
@@ -90,18 +91,18 @@ object Listeners {
         val resourcePack = ResourcePack.selected[player.uniqueId] ?: return
         when (e.status) {
             PlayerResourcePackStatusEvent.Status.SUCCESSFULLY_LOADED -> {
-                resourcePack.onLoaded?.let { KetherShell.eval(it, sender = adaptPlayer(player)) }
+                resourcePack.onLoaded?.let { runKether { KetherShell.eval(it, sender = adaptPlayer(player)) } }
             }
             PlayerResourcePackStatusEvent.Status.DECLINED -> {
                 ResourcePack.selected.remove(player.uniqueId)
-                resourcePack.onDeclined?.let { KetherShell.eval(it, sender = adaptPlayer(player)) }
+                resourcePack.onDeclined?.let { runKether { KetherShell.eval(it, sender = adaptPlayer(player)) } }
             }
             PlayerResourcePackStatusEvent.Status.FAILED_DOWNLOAD -> {
                 ResourcePack.selected.remove(player.uniqueId)
-                resourcePack.onFailedDownload?.let { KetherShell.eval(it, sender = adaptPlayer(player)) }
+                resourcePack.onFailedDownload?.let { runKether { KetherShell.eval(it, sender = adaptPlayer(player)) } }
             }
             PlayerResourcePackStatusEvent.Status.ACCEPTED -> {
-                resourcePack.onAccepted?.let { KetherShell.eval(it, sender = adaptPlayer(player)) }
+                resourcePack.onAccepted?.let { runKether { KetherShell.eval(it, sender = adaptPlayer(player)) } }
             }
         }
     }

@@ -24,7 +24,7 @@ taboolib {
     install("platform-bukkit")
     install("expansion-command-helper")
     classifier = null
-    version = "6.0.9-11"
+    version = "6.0.9-17"
 }
 
 repositories {

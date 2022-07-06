@@ -12,6 +12,7 @@ import taboolib.common.platform.function.getProxyPlayer
 import taboolib.common5.Demand
 import taboolib.expansion.createHelper
 import taboolib.module.kether.KetherShell
+import taboolib.module.kether.runKether
 import taboolib.platform.util.giveItem
 
 /**
@@ -36,8 +37,8 @@ object CommandTools {
     @CommandBody(permission = "fltools.command.lore", optional = true)
     val lore = CommandLore.command
 
-    @CommandBody(permission = "fltools.command.sendresourcepack", optional = true)
-    val sendResourcePack = CommandSendResourcePack.command
+    @CommandBody(permission = "fltools.command.rp", optional = true)
+    val rp = CommandRP.command
 
     @CommandBody(permission = "fltools.command.getdebugitem", optional = true)
     val getDebugItem = subCommand {
@@ -57,7 +58,7 @@ object CommandTools {
                 val source = de.get("source") ?: return@execute
                 val namespace = de.get("namespace")?.split(";") ?: emptyList()
                 val sender = de.get("sender")?.let { getProxyPlayer(it) }
-                KetherShell.eval(source, namespace = namespace, sender = sender)
+                runKether { KetherShell.eval(source, namespace = namespace, sender = sender) }
             }
         }
     }

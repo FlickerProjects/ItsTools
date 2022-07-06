@@ -14,7 +14,8 @@ class ResourcePack(
     val onDeclined: String?,
     val onFailedDownload: String?,
     val onAccepted: String?,
-    val onRemoved: String?
+    val onRemoved: String?,
+    val permission: String?
 ) {
 
     companion object {

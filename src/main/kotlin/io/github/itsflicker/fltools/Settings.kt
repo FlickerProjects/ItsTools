@@ -64,7 +64,8 @@ object Settings {
             val onFailedDownload = it["onFailedDownload"]?.asList()?.joinToString("\n")
             val onAccepted = it["onAccepted"]?.asList()?.joinToString("\n")
             val onRemoved = it["onRemoved"]?.asList()?.joinToString("\n")
-            id to ResourcePack(id, url, hash, onLoaded, onDeclined, onFailedDownload, onAccepted, onRemoved)
+            val permission = it["permission"]?.toString()
+            id to ResourcePack(id, url, hash, onLoaded, onDeclined, onFailedDownload, onAccepted, onRemoved, permission)
         }
     }
 }

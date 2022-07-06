@@ -15,6 +15,7 @@ import taboolib.platform.util.modifyLore
  * @author wlys
  * @since 2021/8/1 11:44
  */
+@Suppress("Deprecation")
 object CommandLore {
 
     // fltools lore append/insert/pop <...>
@@ -66,7 +67,7 @@ object CommandLore {
                     }
                     sender.itemInHand.modifyLore {
                         try {
-                            sender.sendMessage("已移除Lore: ${this.removeAt(argument.toInt()-1)}")
+                            sender.sendMessage("Removed lore: ${this.removeAt(argument.toInt()-1)}")
                         }
                         catch (e: IndexOutOfBoundsException) {
                             sender.sendMessage("该物品第${argument}行没有Lore!")

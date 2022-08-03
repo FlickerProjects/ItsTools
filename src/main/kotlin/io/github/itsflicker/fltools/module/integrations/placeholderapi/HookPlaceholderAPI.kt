@@ -18,7 +18,13 @@ object HookPlaceholderAPI : PlaceholderExpansion {
             val params = args.split('_')
 
             return when (params[0].lowercase()) {
-                "rp" -> (ResourcePack.selected[player.uniqueId]?.id == params[1]).toString()
+                "rp" -> {
+                    if (params.size == 1) {
+                        ResourcePack.selected[player.uniqueId]?.id.toString()
+                    } else {
+                        (ResourcePack.selected[player.uniqueId]?.id == params[1]).toString()
+                    }
+                }
                 else -> "out of case"
             }
         }

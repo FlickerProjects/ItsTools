@@ -8,9 +8,7 @@ import org.bukkit.generator.ChunkGenerator
 import taboolib.common.platform.Platform
 import taboolib.common.platform.Plugin
 import taboolib.common.platform.function.pluginVersion
-import taboolib.module.configuration.createLocal
 import taboolib.module.metrics.Metrics
-import taboolib.platform.BukkitPlugin
 import taboolib.platform.BukkitWorldGenerator
 
 /**
@@ -21,10 +19,6 @@ import taboolib.platform.BukkitWorldGenerator
  * @since 2021/7/31 21:42
  */
 object FlTools : Plugin(), BukkitWorldGenerator {
-
-    val plugin by lazy { BukkitPlugin.getInstance() }
-
-    val local by lazy { createLocal("data.yml") }
 
     private val isZaphkielHooked by lazy { Bukkit.getPluginManager().isPluginEnabled("Zaphkiel") }
 
@@ -41,6 +35,6 @@ object FlTools : Plugin(), BukkitWorldGenerator {
     }
 
     override fun getDefaultWorldGenerator(worldName: String, name: String?): ChunkGenerator {
-        return Void()
+        return Void
     }
 }

@@ -2,8 +2,8 @@ package io.github.itsflicker.fltools.module.command
 
 import io.github.itsflicker.fltools.module.DebugItem
 import io.github.itsflicker.fltools.module.command.impl.*
-import org.bukkit.command.CommandSender
 import org.bukkit.entity.Player
+import taboolib.common.platform.ProxyCommandSender
 import taboolib.common.platform.command.CommandBody
 import taboolib.common.platform.command.CommandHeader
 import taboolib.common.platform.command.mainCommand
@@ -29,10 +29,10 @@ object CommandTools {
     val light = CommandLight.command
 
     @CommandBody(permission = "fltools.command.sendtoast", optional = true)
-    val sendToast = CommandSendToast.command
+    val sendtoast = CommandSendToast.command
 
     @CommandBody(permission = "fltools.command.sendmap", optional = true)
-    val sendMap = CommandSendMap.command
+    val sendmap = CommandSendMap.command
 
     @CommandBody(permission = "fltools.command.lore", optional = true)
     val lore = CommandLore.command
@@ -41,24 +41,24 @@ object CommandTools {
     val rp = CommandRP.command
 
     @CommandBody(permission = "fltools.command.getdebugitem", optional = true)
-    val getDebugItem = subCommand {
+    val getdebugitem = subCommand {
         execute<Player> { sender, _, _ ->
             sender.giveItem(DebugItem.item)
         }
     }
 
     @CommandBody(permission = "fltools.command.simplekether", optional = true)
-    val simpleKether = subCommand {
+    val simplekether = subCommand {
         dynamic("args") {
-            suggestion<CommandSender>(uncheck = true) { _, _ ->
+            suggestion<ProxyCommandSender>(uncheck = true) { _, _ ->
                 listOf("-source", "-namespace", "-sender")
             }
-            execute<CommandSender> { _, _, argument ->
+            execute<ProxyCommandSender> { sender, _, argument ->
                 val de = Demand("simpleKether $argument")
                 val source = de.get("source") ?: return@execute
                 val namespace = de.get("namespace")?.split(";") ?: emptyList()
-                val sender = de.get("sender")?.let { getProxyPlayer(it) }
-                runKether { KetherShell.eval(source, namespace = namespace, sender = sender) }
+                val proxySender = de.get("sender")?.let { getProxyPlayer(it) } ?: sender
+                runKether { KetherShell.eval(source, namespace = namespace, sender = proxySender) }
             }
         }
     }

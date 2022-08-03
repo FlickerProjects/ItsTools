@@ -4,6 +4,7 @@ import org.bukkit.Bukkit
 import org.bukkit.command.CommandSender
 import taboolib.common.platform.ProxyCommandSender
 import taboolib.common.platform.command.subCommand
+import taboolib.common.platform.command.suggestPlayers
 import taboolib.common.platform.function.onlinePlayers
 import taboolib.module.nms.sendMap
 import java.io.File
@@ -18,9 +19,7 @@ object CommandSendMap {
     val command = subCommand {
         literal("file") {
             dynamic("player") {
-                suggestion<ProxyCommandSender> { _, _ ->
-                    onlinePlayers().map { it.name }
-                }
+                suggestPlayers()
                 dynamic("file") {
                     execute<CommandSender> { _, context, argument ->
                         val player = Bukkit.getPlayer(context.argument(-1)) ?: return@execute

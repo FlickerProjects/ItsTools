@@ -17,11 +17,13 @@ Swap-Shortcut:
   whenLookUpQ: ''
 
 ResourcePack:
-  - id: ''
+  - id: 'template'
     # 资源包url
     url: ''
     # 资源包hash 如果不用验证保持默认即可
-    hash: ''
+    hash: ~
+    # 使用资源包权限
+    permission: ~
     # 资源包成功加载后动作
     onLoaded: [ ]
     # 拒绝资源包后动作

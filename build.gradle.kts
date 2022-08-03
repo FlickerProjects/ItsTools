@@ -1,7 +1,7 @@
 plugins {
     `java-library`
     id("io.izzel.taboolib") version "1.40"
-    id("org.jetbrains.kotlin.jvm") version "1.6.10"
+    id("org.jetbrains.kotlin.jvm") version "1.5.10"
 }
 
 taboolib {
@@ -13,6 +13,7 @@ taboolib {
             name("Zaphkiel").optional(true)
             name("eco").optional(true)
         }
+        load("STARTUP")
     }
     install("common", "common-5")
     install("module-ai")
@@ -23,23 +24,26 @@ taboolib {
     install("module-metrics")
     install("platform-bukkit")
     install("expansion-command-helper")
+    install("expansion-javascript")
     classifier = null
-    version = "6.0.9-17"
+    version = "6.0.9-46"
 }
 
 repositories {
     mavenCentral()
     maven("https://jitpack.io")
+    maven("https://repo.papermc.io/repository/maven-public/")
 }
 
 dependencies {
-    compileOnly("com.github.oraxen:oraxen:-SNAPSHOT")
+    compileOnly("com.github.oraxen:oraxen:master-SNAPSHOT")
     compileOnly("com.willfp:eco:6.35.1")
     compileOnly("ink.ptms:Zaphkiel:1.7.2")
 
     compileOnly("ink.ptms:nms-all:1.0.0")
     compileOnly("ink.ptms.core:v11900:11900:mapped")
     compileOnly("ink.ptms.core:v11900:11900:universal")
+    compileOnly("io.papermc.paper:paper-api:1.19-R0.1-SNAPSHOT")
 
     compileOnly(kotlin("stdlib"))
     compileOnly(fileTree("libs"))
@@ -57,6 +61,6 @@ tasks.withType<org.jetbrains.kotlin.gradle.tasks.KotlinCompile> {
 }
 
 configure<JavaPluginConvention> {
-    sourceCompatibility = JavaVersion.VERSION_1_8
-    targetCompatibility = JavaVersion.VERSION_1_8
+    sourceCompatibility = JavaVersion.VERSION_17
+    targetCompatibility = JavaVersion.VERSION_17
 }

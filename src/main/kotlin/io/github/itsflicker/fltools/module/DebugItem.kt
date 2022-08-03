@@ -1,7 +1,7 @@
 package io.github.itsflicker.fltools.module
 
-import io.github.itsflicker.fltools.api.NMS
 import io.github.itsflicker.fltools.module.DebugItem.Mode.*
+import io.github.itsflicker.fltools.module.command.CommandOperation
 import org.bukkit.Bukkit
 import org.bukkit.entity.LivingEntity
 import org.bukkit.event.block.Action
@@ -9,6 +9,7 @@ import org.bukkit.event.player.PlayerInteractEntityEvent
 import org.bukkit.event.player.PlayerInteractEvent
 import org.bukkit.event.player.PlayerSwapHandItemsEvent
 import org.bukkit.inventory.ItemStack
+import taboolib.common.platform.event.EventPriority
 import taboolib.common.platform.event.SubscribeEvent
 import taboolib.common5.Baffle
 import taboolib.library.xseries.XMaterial
@@ -16,11 +17,7 @@ import taboolib.module.ai.navigationMove
 import taboolib.module.chat.colored
 import taboolib.module.nms.ItemTagData
 import taboolib.module.nms.getItemTag
-import taboolib.module.nms.inputSign
-import taboolib.platform.util.buildItem
-import taboolib.platform.util.isAir
-import taboolib.platform.util.modifyLore
-import taboolib.platform.util.sendActionBar
+import taboolib.platform.util.*
 import java.util.*
 import java.util.concurrent.ConcurrentHashMap
 import java.util.concurrent.TimeUnit
@@ -31,7 +28,7 @@ import java.util.concurrent.TimeUnit
  */
 object DebugItem {
 
-    private val cooldown = Baffle.of(100L, TimeUnit.MILLISECONDS)
+    private val cooldown = Baffle.of(200L, TimeUnit.MILLISECONDS)
 
     val item = buildItem(XMaterial.BLAZE_ROD) {
         name = "&f&lFlTools&c Debug Item"
@@ -45,19 +42,16 @@ object DebugItem {
 
     enum class Mode(val index: Int) {
 
-        NULL(-1),
-
         GET_ENTITY_UUID(0),
 
         NAVIGATE(1),
 
-        MAKE_MELEE_HOSTILE(2)
     }
 
-    val negativeCache = ConcurrentHashMap<String, UUID>()
+    private val negativeCache = ConcurrentHashMap<String, UUID>()
 
     fun getMode(item: ItemStack): Mode {
-        val index = item.getItemTag()["mode"]?.asInt() ?: return NULL
+        val index = item.getItemTag()["mode"]?.asInt() ?: return GET_ENTITY_UUID
         return values()[index]
     }
 
@@ -68,7 +62,7 @@ object DebugItem {
     }
 
     fun isDebugItem(item: ItemStack): Boolean {
-        return item.getItemTag()["fltools_debug_item"]?.asInt() == 1
+        return item.isNotAir() && item.getItemTag()["fltools_debug_item"]?.asInt() == 1
     }
 
     fun makeDebugItem(item: ItemStack) {
@@ -79,35 +73,23 @@ object DebugItem {
 
     @SubscribeEvent
     fun e(e: PlayerInteractEntityEvent) {
+        val entity = e.rightClicked as? LivingEntity ?: return
         val player = e.player
-        val item = player.inventory.itemInMainHand.also { if (it.isAir()) return }
+        val operation = CommandOperation.cache.getIfPresent(player.uniqueId)
+        if (operation != null) {
+            operation.accept(entity)
+            CommandOperation.cache.invalidate(player.uniqueId)
+            return
+        }
+        val item = player.inventory.itemInMainHand
         if (isDebugItem(item) && cooldown.hasNext(player.name)) {
-            val entity = e.rightClicked
             when (getMode(item)) {
                 GET_ENTITY_UUID -> {
                     player.sendMessage("&cUUID: &f${entity.uniqueId}".colored())
                 }
                 NAVIGATE -> {
-                    if (entity is LivingEntity) {
-                        negativeCache[player.name] = entity.uniqueId
-                        player.sendMessage("&f${entity.uniqueId} &cCached.".colored())
-                    }
-                }
-                MAKE_MELEE_HOSTILE -> {
-                    if (entity is LivingEntity) {
-                        if (player.isSneaking) {
-                            player.inputSign(arrayOf("2.0", "1.0", "The first line: damage", "The second line: speed")) {
-                                val damage = it[0].toDoubleOrNull() ?: 2.0
-                                val speed = it[1].toDoubleOrNull() ?: 1.0
-                                NMS.INSTANCE.makeMeleeHostile(entity, damage, speed)
-                            }
-                        } else {
-                            NMS.INSTANCE.makeMeleeHostile(entity)
-                        }
-                    }
-                }
-                NULL -> {
-                    player.sendMessage("&cInvalid Mode.".colored())
+                    negativeCache[player.name] = entity.uniqueId
+                    player.sendMessage("&f${entity.uniqueId} &cCached.".colored())
                 }
             }
             e.isCancelled = true
@@ -120,7 +102,7 @@ object DebugItem {
         val item = player.inventory.itemInMainHand.also { if (it.isAir()) return }
         if (isDebugItem(item)) {
             val mode = getMode(item).index
-            val newMode = if (mode < Mode.values().size - 2) mode + 1 else 0
+            val newMode = if (mode < Mode.values().size - 1) mode + 1 else 0
             setMode(item, Mode.values()[newMode].also {
                 item.modifyLore {
                     set(0, "&7当前模式: &f${it.name}".colored())
@@ -131,14 +113,14 @@ object DebugItem {
         }
     }
 
-    @SubscribeEvent
+    @SubscribeEvent(priority = EventPriority.LOWEST)
     fun e(e: PlayerInteractEvent) {
         val player = e.player
-        val item = player.inventory.itemInMainHand.also { if (it.isAir()) return }
-        if (e.action == Action.RIGHT_CLICK_BLOCK && isDebugItem(item) && getMode(item) == NAVIGATE) {
-            val entityUUID = negativeCache.remove(player.name) ?: return
+        val item = player.inventory.itemInMainHand
+        if ((e.action == Action.RIGHT_CLICK_BLOCK || e.action == Action.RIGHT_CLICK_AIR) && isDebugItem(item) && getMode(item) == NAVIGATE) {
+            val entityUUID = negativeCache[player.name] ?: return
             val entity = Bukkit.getEntity(entityUUID) as? LivingEntity ?: return
-            entity.navigationMove(e.clickedBlock?.location ?: player.location, 1.2)
+            entity.navigationMove(e.clickedBlock?.location ?: player.location, 1.0)
             e.isCancelled = true
         }
     }

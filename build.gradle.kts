@@ -26,7 +26,7 @@ taboolib {
     install("expansion-command-helper")
     install("expansion-javascript")
     classifier = null
-    version = "6.0.9-46"
+    version = "6.0.9-81"
 }
 
 repositories {
@@ -43,8 +43,9 @@ dependencies {
     compileOnly("ink.ptms:nms-all:1.0.0")
     compileOnly("ink.ptms.core:v11900:11900:mapped")
     compileOnly("ink.ptms.core:v11900:11900:universal")
-    compileOnly("io.papermc.paper:paper-api:1.19-R0.1-SNAPSHOT")
 
+    compileOnly("com.google.code.gson:gson:2.8.5")
+    compileOnly("com.google.guava:guava:21.0")
     compileOnly(kotlin("stdlib"))
     compileOnly(fileTree("libs"))
 }
@@ -61,6 +62,6 @@ tasks.withType<org.jetbrains.kotlin.gradle.tasks.KotlinCompile> {
 }
 
 configure<JavaPluginConvention> {
-    sourceCompatibility = JavaVersion.VERSION_17
-    targetCompatibility = JavaVersion.VERSION_17
+    sourceCompatibility = JavaVersion.VERSION_1_8
+    targetCompatibility = JavaVersion.VERSION_1_8
 }

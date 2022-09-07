@@ -13,13 +13,11 @@ import taboolib.module.nms.nmsProxy
  */
 abstract class NMS {
 
-    abstract fun getEntityInsentient(entity: LivingEntity): Any?
+    abstract fun addGoalAi(entity: LivingEntity, priority: Int, pathfinderGoal: Any)
 
-    abstract fun addGoalAi(entity: LivingEntity,  priority: Int, pathfinderGoal: Any)
+    abstract fun addTargetAi(entity: LivingEntity, priority: Int, pathfinderGoal: Any)
 
-    abstract fun addTargetAi(entity: LivingEntity,  priority: Int, pathfinderGoal: Any)
-
-    abstract fun makeMeleeHostile(entity: LivingEntity, damage: Double = 2.0, speed: Double = 1.0)
+    abstract fun makeMeleeHostile(entity: LivingEntity, damage: Double? = null, speed: Double = 1.0, priority: Int = 2, type: String = "EntityHuman", followingTargetEvenIfNotSeen: Boolean = false)
 
     abstract fun sendResourcePack(player: Player, url: String, hash: String)
 

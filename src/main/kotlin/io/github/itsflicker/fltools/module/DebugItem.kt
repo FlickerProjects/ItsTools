@@ -11,13 +11,17 @@ import org.bukkit.event.player.PlayerSwapHandItemsEvent
 import org.bukkit.inventory.ItemStack
 import taboolib.common.platform.event.EventPriority
 import taboolib.common.platform.event.SubscribeEvent
+import taboolib.common.platform.function.adaptPlayer
 import taboolib.common5.Baffle
 import taboolib.library.xseries.XMaterial
 import taboolib.module.ai.navigationMove
 import taboolib.module.chat.colored
 import taboolib.module.nms.ItemTagData
 import taboolib.module.nms.getItemTag
-import taboolib.platform.util.*
+import taboolib.platform.util.buildItem
+import taboolib.platform.util.isAir
+import taboolib.platform.util.isNotAir
+import taboolib.platform.util.modifyLore
 import java.util.*
 import java.util.concurrent.ConcurrentHashMap
 import java.util.concurrent.TimeUnit
@@ -75,10 +79,10 @@ object DebugItem {
     fun e(e: PlayerInteractEntityEvent) {
         val entity = e.rightClicked as? LivingEntity ?: return
         val player = e.player
-        val operation = CommandOperation.cache.getIfPresent(player.uniqueId)
+        val operation = CommandOperation.cacheOperations.getIfPresent(player.uniqueId)
         if (operation != null) {
             operation.accept(entity)
-            CommandOperation.cache.invalidate(player.uniqueId)
+            CommandOperation.cacheOperations.invalidate(player.uniqueId)
             return
         }
         val item = player.inventory.itemInMainHand
@@ -107,7 +111,7 @@ object DebugItem {
                 item.modifyLore {
                     set(0, "&7当前模式: &f${it.name}".colored())
                 }
-                player.sendActionBar("§cCurrent mode: ${it.name}")
+                adaptPlayer(player).sendActionBar("§cCurrent mode: ${it.name}")
             })
             e.isCancelled = true
         }

@@ -1,19 +1,8 @@
-# Building
+## ItsTools
 
-* [Gradle](https://gradle.org/) - Dependency Management
-
-The GradleWrapper in included in this project.
-
-**Windows:**
-
-```
-gradlew.bat clean build
-```
-
-**macOS/Linux:**
-
-```
-./gradlew clean build
-```
-
-Build artifacts should be found in `./build/libs` folder.
+- Control resource packs
+- Upload to COS or OSS
+- Modify entity AI
+- Edit item simply
+- Many useful features
+- And more...

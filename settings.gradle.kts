@@ -1,1 +1,1 @@
-rootProject.name = "FlTools"
+rootProject.name = "ItsTools"

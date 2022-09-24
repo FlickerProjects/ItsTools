@@ -1,38 +1,49 @@
-replacing-seed: 123456789
+replacing_seed: 123456789
 
-Swap-Shortcut:
+# 快捷键
+shortcuts:
   # F/Q快捷键冷却
   cooldown: 500 # ms
   # Shift+F
-  whenSneakF: ''
+  sneak_swap: ''
   # 低头时F
-  whenLookDownF: ''
+  down_swap: ''
   # 抬头时F
-  whenLookUpF: ''
+  up_swap: ''
   # Shift+Q
-  whenSneakQ: ''
+  sneak_drop: ''
   # 低头时Q
-  whenLookDownQ: ''
+  down_drop: ''
   # 抬头时Q
-  whenLookUpQ: ''
+  up_drop: ''
 
-ResourcePack:
-  - id: 'template'
+# 上传材质包
+automatically_upload:
+  cos:
+    secret_id: ~
+    secret_key: ~
+    region: ~
+    bucket: ~
+    key: 'pack.zip'
+
+# 材质包
+resource_packs:
+  empty:
     # 资源包url
-    url: ''
+    url: 'http://cdn.moep.tv/files/Empty.zip'
     # 资源包hash 如果不用验证保持默认即可
-    hash: ~
+    hash: '01517226212d27586ea0c5d6aff1aa5492dd2484'
     # 使用资源包权限
     permission: ~
     # 资源包成功加载后动作
-    onLoaded: [ ]
+    loaded: [ ]
     # 拒绝资源包后动作
-    onDeclined:
+    declined:
       - 'command inline "kick {{ sender }} §7请将服务器资源包设置为§f§n启用" as console' # 踢出玩家
     # 资源包下载失败时动作
-    onFailedDownload:
+    failed:
       - 'tell "§c资源包下载失败!"'
     # 接受资源包后动作
-    onAccepted: [ ]
+    accepted: [ ]
     # 资源包移除时动作
-    onRemoved: [ ]
+    removed: [ ]

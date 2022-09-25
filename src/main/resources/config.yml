@@ -5,19 +5,19 @@ shortcuts:
   # F/Q快捷键冷却
   cooldown: 500 # ms
   # Shift+F
-  sneak_swap: ''
+  sneak_swap: [ ]
   # 低头时F
-  down_swap: ''
+  down_swap: [ ]
   # 抬头时F
-  up_swap: ''
+  up_swap: [ ]
   # Shift+Q
-  sneak_drop: ''
+  sneak_drop: [ ]
   # 低头时Q
-  down_drop: ''
+  down_drop: [ ]
   # 抬头时Q
-  up_drop: ''
+  up_drop: [ ]
 
-# 上传材质包
+# 上传资源包
 automatically_upload:
   cos:
     secret_id: ~
@@ -26,15 +26,15 @@ automatically_upload:
     bucket: ~
     key: 'pack.zip'
 
-# 材质包
+# 资源包管理
 resource_packs:
   empty:
     # 资源包url
     url: 'http://cdn.moep.tv/files/Empty.zip'
-    # 资源包hash 如果不用验证保持默认即可
+    # 资源包hash 如果不用验证保持~即可
     hash: '01517226212d27586ea0c5d6aff1aa5492dd2484'
-    # 使用资源包权限
-    permission: ~
+    # 使用资源包条件
+    condition: ~
     # 资源包成功加载后动作
     loaded: [ ]
     # 拒绝资源包后动作

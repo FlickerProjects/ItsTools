@@ -25,7 +25,7 @@ import java.util.function.Consumer
  * @author wlys
  * @since 2021/8/3 15:20
  */
-@CommandHeader("floperation", ["fo"], "ItsTools-FlOperation", permission = "floperation.access")
+@CommandHeader("itsoperation", ["io"], "ItsTools-Operations", permission = "itstools.access")
 object CommandOperation {
 
     val cacheOperations: Cache<UUID, Consumer<LivingEntity>> = CacheBuilder.newBuilder().expireAfterWrite(10, TimeUnit.SECONDS).build()

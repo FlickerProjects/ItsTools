@@ -28,11 +28,12 @@ taboolib {
     install("platform-bukkit")
     install("expansion-command-helper", "expansion-javascript")
     classifier = null
-    version = "6.0.9-92"
+    version = "6.0.9-97"
 }
 
 repositories {
     mavenCentral()
+//    mavenLocal()
     maven("https://jitpack.io")
     maven("https://repo.papermc.io/repository/maven-public/")
 }
@@ -47,6 +48,7 @@ dependencies {
     compileOnly("ink.ptms.core:v11902:11902:mapped")
     compileOnly("ink.ptms.core:v11902:11902:universal")
 
+    compileOnly("com.electronwill.night-config:core:3.6.5")
     compileOnly("com.google.code.gson:gson:2.9.0")
     compileOnly("com.google.guava:guava:31.1-jre")
     compileOnly(kotlin("stdlib"))

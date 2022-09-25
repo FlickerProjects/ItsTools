@@ -21,10 +21,13 @@ value class Condition(val script: String) {
 
     companion object {
 
+        val EMPTY = Condition("")
+
         fun eval(player: Player, script: String): Boolean {
             val (isJavaScript, js) = JavaScriptAgent.serialize(script)
             return if (isJavaScript) JavaScriptAgent.eval(player, js!!).thenApply { Coerce.toBoolean(it) }.get()
             else runKether { KetherShell.eval(script, sender = adaptPlayer(player)).thenApply { Coerce.toBoolean(it) }.get() } ?: false
         }
+
     }
 }

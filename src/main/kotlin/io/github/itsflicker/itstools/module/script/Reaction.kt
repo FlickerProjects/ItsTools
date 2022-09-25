@@ -11,7 +11,7 @@ import taboolib.module.kether.runKether
  * @since 2022/6/15 18:05
  */
 @JvmInline
-value class Reaction(val script: List<String>) {
+value class Reaction(val script: Array<String>) {
 
     fun eval(player: Player, vararg additions: Pair<String, Any>): Any? {
         return if (script.isEmpty()) null
@@ -20,10 +20,13 @@ value class Reaction(val script: List<String>) {
 
     companion object {
 
-        fun eval(player: Player, script: List<String>, vararg additions: Pair<String, Any>): Any? {
+        val EMPTY = Reaction(emptyArray())
+
+        fun eval(player: Player, script: Array<String>, vararg additions: Pair<String, Any>): Any? {
             val (isJavaScript, js) = JavaScriptAgent.serialize(script[0])
             return if (isJavaScript) JavaScriptAgent.eval(player, js!!, *additions).get()
-            else runKether { KetherShell.eval(script, sender = adaptPlayer(player), vars = KetherShell.VariableMap(additions.toMap())).get() }
+            else runKether { KetherShell.eval(script.toList(), sender = adaptPlayer(player), vars = KetherShell.VariableMap(additions.toMap())).get() }
         }
+
     }
 }

@@ -22,7 +22,7 @@ import taboolib.platform.util.giveItem
  * @author wlys
  * @since 2021/7/31 21:55
  */
-@CommandHeader("itstools", ["itstools", "ft", "it"], "Main command of ItsTools", permission = "itstools.access")
+@CommandHeader("itstools", ["it"], "Main command of ItsTools", permission = "itstools.access")
 object CommandTools {
 
     @CommandBody(permission = "itstools.command.light", optional = true)

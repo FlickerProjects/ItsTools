@@ -2,11 +2,10 @@ package io.github.itsflicker.itstools
 
 import io.github.itsflicker.itstools.module.resourcepack.ResourcePack
 import io.github.itsflicker.itstools.module.script.Reaction
+import io.github.itsflicker.itstools.util.ArrayLikeConverter
 import io.github.itsflicker.itstools.util.BaffleConverter
-import io.github.itsflicker.itstools.util.ReactionConverter
 import taboolib.common5.Baffle
 import taboolib.library.configuration.Conversion
-import taboolib.module.configuration.MapConverter
 import java.util.concurrent.TimeUnit
 
 /**
@@ -23,22 +22,22 @@ class Config(
     val replacing_seed: Long = 123456789L,
     val shortcuts: Shortcut = Shortcut(),
     val automatically_upload: AutomaticallyUpload = AutomaticallyUpload(),
-    @Conversion(MapConverter::class) val resource_packs: Map<String, ResourcePack> = emptyMap()
+    @Conversion(ResourcePack.ResourcePackConverter::class) val resource_packs: Map<String, ResourcePack> = emptyMap()
 )
 
 class Shortcut(
     @Conversion(BaffleConverter::class) val cooldown: Baffle = Baffle.of(500L, TimeUnit.MILLISECONDS),
-    @Conversion(ReactionConverter::class) val sneak_swap: Reaction? = null,
-    @Conversion(ReactionConverter::class) val down_swap: Reaction? = null,
-    @Conversion(ReactionConverter::class) val up_swap: Reaction? = null,
-    @Conversion(ReactionConverter::class) val sneak_drop: Reaction? = null,
-    @Conversion(ReactionConverter::class) val down_drop: Reaction? = null,
-    @Conversion(ReactionConverter::class) val up_drop: Reaction? = null,
+    @Conversion(ArrayLikeConverter::class) val sneak_swap: Reaction = Reaction.EMPTY,
+    @Conversion(ArrayLikeConverter::class) val down_swap: Reaction = Reaction.EMPTY,
+    @Conversion(ArrayLikeConverter::class) val up_swap: Reaction = Reaction.EMPTY,
+    @Conversion(ArrayLikeConverter::class) val sneak_drop: Reaction = Reaction.EMPTY,
+    @Conversion(ArrayLikeConverter::class) val down_drop: Reaction = Reaction.EMPTY,
+    @Conversion(ArrayLikeConverter::class) val up_drop: Reaction = Reaction.EMPTY,
 )
 
 class AutomaticallyUpload(
-    val cos: COSUpload? = null,
-    val oss: OSSUpload? = null
+    val cos: COSUpload = COSUpload(),
+    val oss: OSSUpload = OSSUpload()
 )
 
 class COSUpload(

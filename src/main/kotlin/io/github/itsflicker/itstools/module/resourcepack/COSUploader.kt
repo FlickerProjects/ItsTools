@@ -13,15 +13,16 @@ object COSUploader {
     private lateinit var client: COSClient
 
     fun upload(file: File): Exception? {
-        if (conf.automatically_upload.cos == null) {
+        val cos = conf.automatically_upload.cos
+        if (cos.run { secret_id.isEmpty() || secret_key.isEmpty() || region.isEmpty() || bucket.isEmpty() || key.isEmpty() }) {
             return null
         }
         if (!this::client.isInitialized) {
-            val cred = BasicCOSCredentials(conf.automatically_upload.cos!!.secret_id, conf.automatically_upload.cos!!.secret_key)
-            val config = ClientConfig(Region(conf.automatically_upload.cos!!.region))
+            val cred = BasicCOSCredentials(cos.secret_id, cos.secret_key)
+            val config = ClientConfig(Region(cos.region))
             client = COSClient(cred, config)
         }
-        val request = PutObjectRequest(conf.automatically_upload.cos!!.bucket, conf.automatically_upload.cos!!.key, file)
+        val request = PutObjectRequest(cos.bucket, cos.key, file)
         return try {
             client.putObject(request)
             null

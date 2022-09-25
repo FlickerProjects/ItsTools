@@ -34,11 +34,10 @@ object CommandResourcePack {
     val get = subCommand {
         dynamic("id") {
             suggestion<Player> { sender, _ ->
-                conf.resource_packs.filterValues { it.condition == null || it.condition.eval(sender) }.keys.toList()
+                conf.resource_packs.filterValues { it.condition.eval(sender) }.keys.toList()
             }
             execute<Player> { sender, _, argument ->
-                val resourcePack = conf.resource_packs[argument]!!
-                send(sender, resourcePack)
+                send(sender, argument)
             }
         }
     }
@@ -53,8 +52,7 @@ object CommandResourcePack {
                 }
                 execute<ProxyCommandSender> { _, context, argument ->
                     val player = Bukkit.getPlayer(context.argument(-1))!!
-                    val resourcePack = conf.resource_packs[argument]!!
-                    send(player, resourcePack)
+                    send(player, argument)
                 }
             }
         }
@@ -93,7 +91,8 @@ object CommandResourcePack {
         }
     }
 
-    private fun send(player: Player, resourcePack: ResourcePack) {
+    private fun send(player: Player, id: String) {
+        val resourcePack = conf.resource_packs[id] ?: return
         ResourcePack.selected.remove(player.uniqueId)?.removed?.eval(player)
         when {
             resourcePack.url.equals("itemsadder", ignoreCase = true) -> {

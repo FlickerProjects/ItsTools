@@ -2,6 +2,7 @@ package io.github.itsflicker.itstools.module.listeners
 
 import io.github.itsflicker.itstools.conf
 import io.github.itsflicker.itstools.module.resourcepack.ResourcePack
+import io.github.itsflicker.itstools.module.script.Reaction
 import org.bukkit.entity.Phantom
 import org.bukkit.entity.Player
 import org.bukkit.event.entity.CreatureSpawnEvent
@@ -35,17 +36,17 @@ object Listeners {
         val player = e.player
         if (conf.shortcuts.cooldown.hasNext(player.name)) {
             val view = player.location.pitch
-            if (player.isSneaking) {
-                conf.shortcuts.sneak_swap?.eval(player) ?: return
+            if (player.isSneaking && conf.shortcuts.sneak_swap != Reaction.EMPTY) {
                 e.isCancelled = true
+                conf.shortcuts.sneak_swap.eval(player)
             }
-            else if (view >= 80.0F) {
-                conf.shortcuts.down_swap?.eval(player) ?: return
+            else if (view >= 80.0F && conf.shortcuts.down_swap != Reaction.EMPTY) {
                 e.isCancelled = true
+                conf.shortcuts.down_swap.eval(player)
             }
-            else if (view <= -80.0F) {
-                conf.shortcuts.up_swap?.eval(player) ?: return
+            else if (view <= -80.0F && conf.shortcuts.up_swap != Reaction.EMPTY) {
                 e.isCancelled = true
+                conf.shortcuts.up_swap.eval(player)
             }
         }
     }
@@ -55,17 +56,17 @@ object Listeners {
         val player = e.player
         if (conf.shortcuts.cooldown.hasNext(player.name)) {
             val view = player.location.pitch
-            if (player.isSneaking) {
-                conf.shortcuts.sneak_drop?.eval(player) ?: return
+            if (player.isSneaking && conf.shortcuts.sneak_drop != Reaction.EMPTY) {
                 e.isCancelled = true
+                conf.shortcuts.sneak_drop.eval(player)
             }
-            else if (view >= 80.0F) {
-                conf.shortcuts.down_drop?.eval(player) ?: return
+            else if (view >= 80.0F && conf.shortcuts.down_drop != Reaction.EMPTY) {
                 e.isCancelled = true
+                conf.shortcuts.down_drop.eval(player) ?: return
             }
-            else if (view <= -80.0F) {
-                conf.shortcuts.up_drop?.eval(player) ?: return
+            else if (view <= -80.0F && conf.shortcuts.up_drop != Reaction.EMPTY) {
                 e.isCancelled = true
+                conf.shortcuts.up_drop.eval(player) ?: return
             }
         }
     }
@@ -89,18 +90,18 @@ object Listeners {
         val resourcePack = ResourcePack.selected[player.uniqueId] ?: return
         when (e.status) {
             PlayerResourcePackStatusEvent.Status.SUCCESSFULLY_LOADED -> {
-                resourcePack.loaded?.eval(player)
+                resourcePack.loaded.eval(player)
             }
             PlayerResourcePackStatusEvent.Status.DECLINED -> {
                 ResourcePack.selected.remove(player.uniqueId)
-                resourcePack.declined?.eval(player)
+                resourcePack.declined.eval(player)
             }
             PlayerResourcePackStatusEvent.Status.FAILED_DOWNLOAD -> {
                 ResourcePack.selected.remove(player.uniqueId)
-                resourcePack.failed?.eval(player)
+                resourcePack.failed.eval(player)
             }
             PlayerResourcePackStatusEvent.Status.ACCEPTED -> {
-                resourcePack.accepted?.eval(player)
+                resourcePack.accepted.eval(player)
             }
         }
     }

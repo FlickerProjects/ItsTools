@@ -1,8 +1,6 @@
 package io.github.itsflicker.itstools.util
 
 import io.github.itsflicker.itstools.api.NMS
-import io.github.itsflicker.itstools.module.script.Condition
-import io.github.itsflicker.itstools.module.script.Reaction
 import taboolib.common.util.asList
 import taboolib.common5.Baffle
 import taboolib.library.configuration.Converter
@@ -12,7 +10,6 @@ import java.util.concurrent.TimeUnit
 val nms = nmsProxy<NMS>()
 
 class BaffleConverter : Converter<Baffle, Long> {
-
     override fun convertToField(value: Long): Baffle {
         return Baffle.of(value, TimeUnit.MILLISECONDS)
     }
@@ -20,29 +17,14 @@ class BaffleConverter : Converter<Baffle, Long> {
     override fun convertFromField(value: Baffle): Long {
         error("Not supported.")
     }
-
 }
 
-class ConditionConverter : Converter<Condition, String> {
-
-    override fun convertToField(value: String): Condition {
-        return Condition(value)
+class ArrayLikeConverter : Converter<Array<String>, Any> {
+    override fun convertToField(value: Any): Array<String> {
+        return value.asList().toTypedArray()
     }
 
-    override fun convertFromField(value: Condition): String {
-        return value.script
+    override fun convertFromField(value: Array<String>): Any {
+        return if (value.size == 1) value[0] else value.toList()
     }
-
-}
-
-class ReactionConverter : Converter<Reaction, Any> {
-
-    override fun convertToField(value: Any): Reaction {
-        return Reaction(value.asList())
-    }
-
-    override fun convertFromField(value: Reaction): List<String> {
-        return value.script
-    }
-
 }

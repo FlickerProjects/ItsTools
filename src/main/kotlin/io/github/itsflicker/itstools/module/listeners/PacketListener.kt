@@ -18,20 +18,14 @@ object PacketListener {
     @SubscribeEvent
     fun send(e: PacketSendEvent) {
         if (e.packet.name == "PacketPlayOutLogin") {
-            if (majorLegacy >= 11900) {
-                e.packet.source.invokeMethod<Void>("seed", conf.replacing_seed)
-            }
-            else if (majorLegacy >= 11700) {
+            if (majorLegacy >= 11700) {
                 e.packet.write("seed", conf.replacing_seed)
             } else {
                 e.packet.write("b", conf.replacing_seed)
             }
         }
         if (e.packet.name == "PacketPlayOutRespawn") {
-            if (majorLegacy >= 11900) {
-                e.packet.source.invokeMethod<Void>("seed", conf.replacing_seed)
-            }
-            else if (majorLegacy >= 11700) {
+            if (majorLegacy >= 11700) {
                 e.packet.write("seed", conf.replacing_seed)
             } else {
                 e.packet.write("b", conf.replacing_seed)

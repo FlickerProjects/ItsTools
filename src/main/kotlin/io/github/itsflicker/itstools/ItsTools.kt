@@ -10,7 +10,7 @@ import taboolib.common.platform.Plugin
 import taboolib.common.platform.function.pluginVersion
 import taboolib.module.configuration.Config
 import taboolib.module.configuration.Configuration
-import taboolib.module.configuration.Configuration.Companion.getObject
+import taboolib.module.configuration.Configuration.Companion.toObject
 import taboolib.module.metrics.Metrics
 import taboolib.platform.BukkitWorldGenerator
 
@@ -51,7 +51,7 @@ object ItsTools : Plugin(), BukkitWorldGenerator {
     }
 
     fun reload() {
-        conf = config.getObject("", false)
+        conf = config.toObject(false)
     }
 
 }

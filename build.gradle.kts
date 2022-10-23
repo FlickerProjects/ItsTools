@@ -1,6 +1,6 @@
 plugins {
     `java-library`
-    id("io.izzel.taboolib") version "1.42"
+    id("io.izzel.taboolib") version "1.50"
     id("org.jetbrains.kotlin.jvm") version "1.5.31"
 }
 
@@ -10,6 +10,7 @@ taboolib {
             name("ItsFlicker")
         }
         dependencies {
+            name("PlaceholderAPI").optional(true)
             name("Zaphkiel").optional(true)
             name("eco").optional(true)
         }
@@ -28,7 +29,7 @@ taboolib {
     install("platform-bukkit")
     install("expansion-command-helper", "expansion-javascript")
     classifier = null
-    version = "6.0.9-97"
+    version = "6.0.10-6"
 }
 
 repositories {
@@ -48,6 +49,8 @@ dependencies {
     compileOnly("ink.ptms.core:v11902:11902:mapped")
     compileOnly("ink.ptms.core:v11902:11902:universal")
 
+//    compileOnly("io.netty:netty-all:5.0.0.Alpha2")
+//    compileOnly("com.mojang:authlib:1.5.25")
     compileOnly("com.electronwill.night-config:core:3.6.5")
     compileOnly("com.google.code.gson:gson:2.9.0")
     compileOnly("com.google.guava:guava:31.1-jre")

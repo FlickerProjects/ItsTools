@@ -6,6 +6,7 @@ import io.github.itsflicker.itstools.util.ArrayLikeConverter
 import io.github.itsflicker.itstools.util.BaffleConverter
 import taboolib.common5.Baffle
 import taboolib.library.configuration.Conversion
+import taboolib.library.configuration.Path
 import java.util.concurrent.TimeUnit
 
 /**
@@ -19,10 +20,24 @@ import java.util.concurrent.TimeUnit
 lateinit var conf: Config
 
 class Config(
-    val replacing_seed: Long = 123456789L,
+    val features: Features = Features(),
+    val integrations: Integrations = Integrations(),
     val shortcuts: Shortcut = Shortcut(),
     val automatically_upload: AutomaticallyUpload = AutomaticallyUpload(),
     @Conversion(ResourcePack.ResourcePackConverter::class) val resource_packs: Map<String, ResourcePack> = emptyMap()
+)
+
+class Features(
+    val replacing_seed: Long = 123456789L,
+    val remove_damage_indicator_particles: Boolean = false
+)
+
+class Integrations(
+    val eco: Boolean = true,
+    @Path("ItemsAdder") val itemsAdder: Boolean = true,
+    @Path("Oraxen") val oraxen: Boolean = true,
+    @Path("Sandalphon") val sandalphon: Boolean = true,
+    @Path("Zaphkiel") val zaphkiel: Boolean = true
 )
 
 class Shortcut(

@@ -1,4 +1,4 @@
-package io.github.itsflicker.itstools.module.integrations.zaphkiel
+package io.github.itsflicker.itstools.module.integration.zaphkiel
 
 import com.willfp.eco.core.items.TestableItem
 import com.willfp.eco.core.items.provider.ItemProvider

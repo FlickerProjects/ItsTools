@@ -1,7 +1,7 @@
 package io.github.itsflicker.itstools.module.command
 
-import io.github.itsflicker.itstools.module.DebugItem
 import io.github.itsflicker.itstools.module.command.impl.*
+import io.github.itsflicker.itstools.module.feature.DebugItem
 import org.bukkit.entity.Player
 import taboolib.common.platform.ProxyCommandSender
 import taboolib.common.platform.command.CommandBody

@@ -4,6 +4,8 @@ import dev.lone.itemsadder.api.ItemsAdder
 import io.github.itsflicker.itstools.conf
 import io.github.itsflicker.itstools.module.resourcepack.COSUploader
 import io.github.itsflicker.itstools.module.resourcepack.ResourcePack
+import io.github.itsflicker.itstools.util.isItemsAdderHooked
+import io.github.itsflicker.itstools.util.isOraxenHooked
 import io.github.itsflicker.itstools.util.nms
 import io.th0rgal.oraxen.OraxenPlugin
 import org.bukkit.Bukkit
@@ -26,9 +28,6 @@ import taboolib.common.platform.function.warning
  * @since 2021/8/6 22:55
  */
 object CommandResourcePack {
-
-    private val isOraxenHooked by lazy { Bukkit.getPluginManager().isPluginEnabled("Oraxen") }
-    private val isItemsAdderHooked  by lazy { Bukkit.getPluginManager().isPluginEnabled("ItemsAdder") }
 
     @CommandBody(permission = "itstools.command.resourcepack.get")
     val get = subCommand {
@@ -74,9 +73,8 @@ object CommandResourcePack {
                         "itemsadder" -> {
                             COSUploader.upload(getDataFolder()
                                 .resolveSibling("ItemsAdder")
-                                .resolve("data")
-                                .resolve("resource_pack")
-                                .resolve("pack.zip"))
+                                .resolve("output")
+                                .resolve("generated.zip"))
                         }
                         else -> {
                             val file = getDataFolder().resolve("packs").resolve(argument)

@@ -8,11 +8,11 @@ import com.qcloud.cos.region.Region
 import io.github.itsflicker.itstools.conf
 import java.io.File
 
-object COSUploader {
+object COSUploader : ResourcePackUploader {
 
     private lateinit var client: COSClient
 
-    fun upload(file: File): Exception? {
+    override fun upload(file: File): Exception? {
         val cos = conf.automatically_upload.cos
         if (cos.run { secret_id.isEmpty() || secret_key.isEmpty() || region.isEmpty() || bucket.isEmpty() || key.isEmpty() }) {
             return null

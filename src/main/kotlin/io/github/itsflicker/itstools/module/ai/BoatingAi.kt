@@ -1,6 +1,5 @@
 package io.github.itsflicker.itstools.module.ai
 
-import io.github.itsflicker.itstools.util.InstantVector
 import org.bukkit.entity.Boat
 import org.bukkit.entity.LivingEntity
 import org.bukkit.entity.Minecart
@@ -18,15 +17,15 @@ class BoatingAi(val entity: LivingEntity) : SimpleAi() {
         if (oldValue == newValue && entity.vehicle?.velocity != empty) {
             return@observable
         }
-        if (newValue != null) {
-            InstantVector.useToVanilla(
-                entity.vehicle!!,
-                newValue.x - entity.vehicle!!.location.x,
-                newValue.y - entity.vehicle!!.location.y + 0.5,
-                newValue.z - entity.vehicle!!.location.z,
-                (newValue.distance(entity.vehicle!!.location.toVector()) / 2 * 20).toLong()
-            )
-        }
+//        if (newValue != null) {
+//            InstantVector.useToVanilla(
+//                entity.vehicle!!,
+//                newValue.x - entity.vehicle!!.location.x,
+//                newValue.y - entity.vehicle!!.location.y + 0.5,
+//                newValue.z - entity.vehicle!!.location.z,
+//                (newValue.distance(entity.vehicle!!.location.toVector()) / 2 * 20).toLong()
+//            )
+//        }
     }
 
     override fun startTask() {

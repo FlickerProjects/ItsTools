@@ -13,22 +13,42 @@ import taboolib.module.nms.PacketSendEvent
  * @author wlys
  * @since 2021/8/4 17:07
  */
+@Suppress("unused")
 object PacketListener {
 
     @SubscribeEvent
     fun send(e: PacketSendEvent) {
-        if (e.packet.name == "PacketPlayOutLogin") {
-            if (majorLegacy >= 11700) {
-                e.packet.write("seed", conf.replacing_seed)
-            } else {
-                e.packet.write("b", conf.replacing_seed)
+        when (e.packet.name) {
+            "PacketPlayOutLogin" -> {
+                if (majorLegacy >= 11700) {
+                    e.packet.write("seed", conf.features.replacing_seed)
+                } else {
+                    e.packet.write("b", conf.features.replacing_seed)
+                }
             }
-        }
-        if (e.packet.name == "PacketPlayOutRespawn") {
-            if (majorLegacy >= 11700) {
-                e.packet.write("seed", conf.replacing_seed)
-            } else {
-                e.packet.write("b", conf.replacing_seed)
+            "PacketPlayOutRespawn" -> {
+                if (majorLegacy >= 11700) {
+                    e.packet.write("seed", conf.features.replacing_seed)
+                } else {
+                    e.packet.write("b", conf.features.replacing_seed)
+                }
+            }
+            "PacketPlayOutWorldParticles" -> {
+                if (majorLegacy >= 11800) {
+                    if (
+                        e.packet.read<Any>("particle")!!.invokeMethod<String>("writeToString")!! == "minecraft:damage_indicator"
+                        && conf.features.remove_damage_indicator_particles
+                    ) {
+                        e.isCancelled = true
+                    }
+                } else {
+                    if (
+                        e.packet.read<Any>("j")!!.invokeMethod<String>("a")!! == "minecraft:damage_indicator"
+                        && conf.features.remove_damage_indicator_particles
+                    ) {
+                        e.isCancelled = true
+                    }
+                }
             }
         }
     }

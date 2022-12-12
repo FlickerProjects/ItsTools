@@ -1,6 +1,8 @@
 package io.github.itsflicker.itstools.module.listeners
 
 import io.github.itsflicker.itstools.conf
+import io.github.itsflicker.itstools.module.feature.DebugItem
+import io.github.itsflicker.itstools.module.feature.IPInfo
 import io.github.itsflicker.itstools.module.resourcepack.ResourcePack
 import io.github.itsflicker.itstools.module.script.Reaction
 import org.bukkit.entity.Phantom
@@ -18,21 +20,33 @@ import taboolib.common.platform.event.SubscribeEvent
  * @author wlys
  * @since 2021/8/4 20:42
  */
+@Suppress("unused")
 object Listeners {
 
-    @SubscribeEvent
-    fun e(e: PlayerQuitEvent) {
-        ResourcePack.selected.remove(e.player.uniqueId)?.removed?.eval(e.player)
+    fun quit(player: Player) {
+        ResourcePack.selected.remove(player.uniqueId)?.removed?.eval(player)
+        DebugItem.cooldown.reset(player.name)
+        IPInfo.caches.remove(player.uniqueId)
     }
 
     @SubscribeEvent
-    fun e(e: PlayerKickEvent) {
-        ResourcePack.selected.remove(e.player.uniqueId)?.removed?.eval(e.player)
+    fun onJoin(e: PlayerJoinEvent) {
+        IPInfo.cacheFromCloud(e.player)
+    }
+
+    @SubscribeEvent
+    fun onQuit(e: PlayerQuitEvent) {
+        quit(e.player)
+    }
+
+    @SubscribeEvent
+    fun onKick(e: PlayerKickEvent) {
+        quit(e.player)
     }
 
     @Ghost
     @SubscribeEvent(priority = EventPriority.HIGHEST, ignoreCancelled = true)
-    fun e(e: PlayerSwapHandItemsEvent) {
+    fun onSwap(e: PlayerSwapHandItemsEvent) {
         val player = e.player
         if (conf.shortcuts.cooldown.hasNext(player.name)) {
             val view = player.location.pitch
@@ -52,7 +66,7 @@ object Listeners {
     }
 
     @SubscribeEvent(priority = EventPriority.HIGHEST, ignoreCancelled = true)
-    fun e(e: PlayerDropItemEvent) {
+    fun onDrop(e: PlayerDropItemEvent) {
         val player = e.player
         if (conf.shortcuts.cooldown.hasNext(player.name)) {
             val view = player.location.pitch
@@ -72,7 +86,7 @@ object Listeners {
     }
 
     @SubscribeEvent(ignoreCancelled = true)
-    fun e(e: CreatureSpawnEvent) {
+    fun onSpawn(e: CreatureSpawnEvent) {
         val entity = e.entity
         if (entity is Phantom && e.spawnReason == CreatureSpawnEvent.SpawnReason.NATURAL) {
             entity.getNearbyEntities(11.0, 40.0, 11.0).forEach {
@@ -85,7 +99,7 @@ object Listeners {
     }
 
     @SubscribeEvent
-    fun e(e: PlayerResourcePackStatusEvent) {
+    fun onRPStatus(e: PlayerResourcePackStatusEvent) {
         val player = e.player
         val resourcePack = ResourcePack.selected[player.uniqueId] ?: return
         when (e.status) {

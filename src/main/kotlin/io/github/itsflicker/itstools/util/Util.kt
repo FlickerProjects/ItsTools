@@ -1,13 +1,27 @@
 package io.github.itsflicker.itstools.util
 
+import com.google.gson.JsonElement
+import com.google.gson.JsonParser
 import io.github.itsflicker.itstools.api.NMS
+import io.github.itsflicker.itstools.conf
+import org.bukkit.Bukkit
 import taboolib.common.util.asList
+import taboolib.common.util.unsafeLazy
 import taboolib.common5.Baffle
 import taboolib.library.configuration.Converter
 import taboolib.module.nms.nmsProxy
 import java.util.concurrent.TimeUnit
 
 val nms = nmsProxy<NMS>()
+private val jsonParser = JsonParser()
+
+internal val isEcoHooked by unsafeLazy { Bukkit.getPluginManager().isPluginEnabled("eco") && conf.integrations.eco }
+internal val isItemsAdderHooked by unsafeLazy { Bukkit.getPluginManager().isPluginEnabled("ItemsAdder") && conf.integrations.itemsAdder }
+internal val isOraxenHooked by unsafeLazy { Bukkit.getPluginManager().isPluginEnabled("Oraxen") && conf.integrations.oraxen }
+internal val isSandalphonHooked by unsafeLazy { Bukkit.getPluginManager().isPluginEnabled("Sandalphon") && conf.integrations.sandalphon }
+internal val isZaphkielHooked by unsafeLazy { Bukkit.getPluginManager().isPluginEnabled("Zaphkiel") && conf.integrations.zaphkiel }
+
+fun String.parseJson(): JsonElement = jsonParser.parse(this)!!
 
 class BaffleConverter : Converter<Baffle, Long> {
     override fun convertToField(value: Long): Baffle {

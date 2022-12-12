@@ -1,4 +1,15 @@
-replacing_seed: 123456789
+features:
+  # 混淆种子
+  replacing_seed: 123456789
+  # 移除锋利粒子效果
+  remove_damage_indicator_particles: false
+
+integrations:
+  eco: true
+  ItemsAdder: true
+  Oraxen: true
+  Sandalphon: true
+  Zaphkiel: true
 
 # 快捷键
 shortcuts:
@@ -19,12 +30,21 @@ shortcuts:
 
 # 上传资源包
 automatically_upload:
+  # 腾讯云
   cos:
     secret_id: ~
     secret_key: ~
     region: ~
     bucket: ~
     key: 'pack.zip'
+  # 阿里云
+  oss:
+    # 按实际地区填写
+    endpoint: 'https://oss-cn-hangzhou.aliyuncs.com'
+    access_key_id: ~
+    access_key_secret: ~
+    bucket: ~
+    path: 'pack.zip'
 
 # 资源包管理
 resource_packs:

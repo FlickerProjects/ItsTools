@@ -1,10 +1,18 @@
 package io.github.itsflicker.itstools
 
 import com.willfp.eco.core.items.Items
-import io.github.itsflicker.itstools.module.Void
-import io.github.itsflicker.itstools.module.integrations.zaphkiel.ZaphkielItemProvider
-import org.bukkit.Bukkit
+import ink.ptms.sandalphon.Sandalphon
+import io.github.itsflicker.itstools.module.feature.IPInfo
+import io.github.itsflicker.itstools.module.feature.Void
+import io.github.itsflicker.itstools.module.integration.itemsadder.ItemsAdderItemAPI
+import io.github.itsflicker.itstools.module.integration.zaphkiel.ZaphkielItemProvider
+import io.github.itsflicker.itstools.util.isEcoHooked
+import io.github.itsflicker.itstools.util.isItemsAdderHooked
+import io.github.itsflicker.itstools.util.isSandalphonHooked
+import io.github.itsflicker.itstools.util.isZaphkielHooked
 import org.bukkit.generator.ChunkGenerator
+import taboolib.common.env.RuntimeDependencies
+import taboolib.common.env.RuntimeDependency
 import taboolib.common.platform.Platform
 import taboolib.common.platform.Plugin
 import taboolib.common.platform.function.pluginVersion
@@ -13,6 +21,7 @@ import taboolib.module.configuration.Configuration
 import taboolib.module.configuration.Configuration.Companion.toObject
 import taboolib.module.metrics.Metrics
 import taboolib.platform.BukkitWorldGenerator
+import taboolib.platform.util.onlinePlayers
 
 /**
  * ItsTools
@@ -21,15 +30,16 @@ import taboolib.platform.BukkitWorldGenerator
  * @author wlys
  * @since 2021/7/31 21:42
  */
+@RuntimeDependencies(
+    RuntimeDependency(value = "com.fasterxml.jackson.core:jackson-core:2.13.3", transitive = false),
+    RuntimeDependency(value = "com.fasterxml.jackson.core:jackson-annotations:2.13.3", transitive = false),
+    RuntimeDependency(value = "com.fasterxml.jackson.core:jackson-databind:2.13.3", transitive = false)
+)
 object ItsTools : Plugin(), BukkitWorldGenerator {
 
     @Config(autoReload = true)
     lateinit var config: Configuration
         private set
-
-    private val isZaphkielHooked by lazy { Bukkit.getPluginManager().isPluginEnabled("Zaphkiel") }
-
-    private val isEcoHooked by lazy { Bukkit.getPluginManager().isPluginEnabled("eco") }
 
     override fun onLoad() {
         config.onReload { reload() }
@@ -39,15 +49,18 @@ object ItsTools : Plugin(), BukkitWorldGenerator {
     override fun onEnable() {
         Metrics(12296, pluginVersion, Platform.BUKKIT)
 
-        if (isEcoHooked) {
-            if (isZaphkielHooked) {
-                Items.registerItemProvider(ZaphkielItemProvider())
-            }
+        if (isEcoHooked && isZaphkielHooked) {
+            Items.registerItemProvider(ZaphkielItemProvider())
         }
+        if (isItemsAdderHooked && isSandalphonHooked) {
+            Sandalphon.registerItemAPI(ItemsAdderItemAPI())
+        }
+
+        onlinePlayers.forEach { IPInfo.cacheFromCloud(it) }
     }
 
     override fun getDefaultWorldGenerator(worldName: String, name: String?): ChunkGenerator {
-        return Void
+        return Void()
     }
 
     fun reload() {

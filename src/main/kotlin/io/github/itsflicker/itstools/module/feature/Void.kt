@@ -1,4 +1,4 @@
-package io.github.itsflicker.itstools.module
+package io.github.itsflicker.itstools.module.feature
 
 import org.bukkit.HeightMap
 import org.bukkit.Location
@@ -9,7 +9,7 @@ import org.bukkit.generator.WorldInfo
 import taboolib.library.reflex.Reflex.Companion.invokeMethod
 import java.util.*
 
-object Void : ChunkGenerator() {
+class Void : ChunkGenerator() {
 
     override fun canSpawn(world: World, x: Int, z: Int): Boolean {
         return true

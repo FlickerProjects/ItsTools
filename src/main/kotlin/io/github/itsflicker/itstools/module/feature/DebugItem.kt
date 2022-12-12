@@ -1,7 +1,7 @@
-package io.github.itsflicker.itstools.module
+package io.github.itsflicker.itstools.module.feature
 
-import io.github.itsflicker.itstools.module.DebugItem.Mode.*
 import io.github.itsflicker.itstools.module.command.CommandOperation
+import io.github.itsflicker.itstools.module.feature.DebugItem.Mode.*
 import org.bukkit.Bukkit
 import org.bukkit.entity.LivingEntity
 import org.bukkit.event.block.Action
@@ -32,7 +32,7 @@ import java.util.concurrent.TimeUnit
  */
 object DebugItem {
 
-    private val cooldown = Baffle.of(200L, TimeUnit.MILLISECONDS)
+    val cooldown = Baffle.of(200L, TimeUnit.MILLISECONDS)
 
     val item = buildItem(XMaterial.BLAZE_ROD) {
         name = "&f&lItsTools&c Debug Item"
@@ -107,7 +107,7 @@ object DebugItem {
         if (isDebugItem(item)) {
             val mode = getMode(item).index
             val newMode = if (mode < Mode.values().size - 1) mode + 1 else 0
-            setMode(item, Mode.values()[newMode].also {
+            setMode(item, values()[newMode].also {
                 item.modifyLore {
                     set(0, "&7当前模式: &f${it.name}".colored())
                 }

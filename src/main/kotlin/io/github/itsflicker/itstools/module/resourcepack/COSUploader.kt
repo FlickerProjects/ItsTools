@@ -12,10 +12,10 @@ object COSUploader : ResourcePackUploader {
 
     private lateinit var client: COSClient
 
-    override fun upload(file: File): Exception? {
+    override fun upload(file: File): Boolean {
         val cos = conf.automatically_upload.cos
         if (cos.run { secret_id.isEmpty() || secret_key.isEmpty() || region.isEmpty() || bucket.isEmpty() || key.isEmpty() }) {
-            return null
+            return false
         }
         if (!this::client.isInitialized) {
             val cred = BasicCOSCredentials(cos.secret_id, cos.secret_key)
@@ -25,9 +25,10 @@ object COSUploader : ResourcePackUploader {
         val request = PutObjectRequest(cos.bucket, cos.key, file)
         return try {
             client.putObject(request)
-            null
-        } catch (e: Exception) {
-            e
+            true
+        } catch (t: Throwable) {
+            t.printStackTrace()
+            false
         }
     }
 

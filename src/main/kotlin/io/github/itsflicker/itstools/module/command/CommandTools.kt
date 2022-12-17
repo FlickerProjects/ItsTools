@@ -1,7 +1,9 @@
 package io.github.itsflicker.itstools.module.command
 
+import io.github.itsflicker.itstools.ItsTools
 import io.github.itsflicker.itstools.module.command.impl.*
 import io.github.itsflicker.itstools.module.feature.DebugItem
+import org.bukkit.command.CommandSender
 import org.bukkit.entity.Player
 import taboolib.common.platform.ProxyCommandSender
 import taboolib.common.platform.command.CommandBody
@@ -60,6 +62,13 @@ object CommandTools {
                 val proxySender = de.get("sender")?.let { getProxyPlayer(it) } ?: sender
                 runKether { KetherShell.eval(source, namespace = namespace, sender = proxySender) }
             }
+        }
+    }
+
+    @CommandBody(permission = "itstools.command.simplekether", optional = true)
+    val reload = subCommand {
+        execute<CommandSender> { _, _, _ ->
+            ItsTools.reload()
         }
     }
 

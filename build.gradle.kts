@@ -10,9 +10,12 @@ taboolib {
             name("ItsFlicker")
         }
         dependencies {
-            name("PlaceholderAPI").optional(true)
-            name("Zaphkiel").optional(true)
             name("eco").optional(true)
+            name("ItemsAdder").optional(true)
+            name("Oraxen").optional(true)
+            name("PlaceholderAPI").optional(true)
+            name("Sandalphon").optional(true)
+            name("Zaphkiel").optional(true)
         }
         load("STARTUP")
     }
@@ -40,9 +43,10 @@ repositories {
 }
 
 dependencies {
+//    compileOnly("public:ModelEngine:3.0.0")
+    compileOnly("com.willfp:eco:6.35.1")
     compileOnly("com.github.LoneDev6:api-itemsadder:3.2.5")
     compileOnly("com.github.oraxen:oraxen:-SNAPSHOT")
-    compileOnly("com.willfp:eco:6.35.1")
     compileOnly("ink.ptms:Zaphkiel:2.0.14")
 
     compileOnly("ink.ptms:nms-all:1.0.0")

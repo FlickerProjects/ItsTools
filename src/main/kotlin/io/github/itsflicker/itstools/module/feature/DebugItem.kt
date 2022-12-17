@@ -52,7 +52,7 @@ object DebugItem {
 
     }
 
-    private val negativeCache = ConcurrentHashMap<String, UUID>()
+    val cache = ConcurrentHashMap<String, UUID>()
 
     fun getMode(item: ItemStack): Mode {
         val index = item.getItemTag()["mode"]?.asInt() ?: return GET_ENTITY_UUID
@@ -89,10 +89,11 @@ object DebugItem {
         if (isDebugItem(item) && cooldown.hasNext(player.name)) {
             when (getMode(item)) {
                 GET_ENTITY_UUID -> {
+                    cache[player.name] = entity.uniqueId
                     player.sendMessage("&cUUID: &f${entity.uniqueId}".colored())
                 }
                 NAVIGATE -> {
-                    negativeCache[player.name] = entity.uniqueId
+                    cache[player.name] = entity.uniqueId
                     player.sendMessage("&f${entity.uniqueId} &cCached.".colored())
                 }
             }
@@ -122,7 +123,7 @@ object DebugItem {
         val player = e.player
         val item = player.inventory.itemInMainHand
         if ((e.action == Action.RIGHT_CLICK_BLOCK || e.action == Action.RIGHT_CLICK_AIR) && isDebugItem(item) && getMode(item) == NAVIGATE) {
-            val entityUUID = negativeCache[player.name] ?: return
+            val entityUUID = cache[player.name] ?: return
             val entity = Bukkit.getEntity(entityUUID) as? LivingEntity ?: return
             entity.navigationMove(e.clickedBlock?.location ?: player.location, 1.0)
             e.isCancelled = true

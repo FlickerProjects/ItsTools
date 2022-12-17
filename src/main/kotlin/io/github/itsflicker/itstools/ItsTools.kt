@@ -46,13 +46,13 @@ object ItsTools : Plugin(), BukkitWorldGenerator {
         reload()
     }
 
-    override fun onEnable() {
+    override fun onActive() {
         Metrics(12296, pluginVersion, Platform.BUKKIT)
 
         if (isEcoHooked && isZaphkielHooked) {
             Items.registerItemProvider(ZaphkielItemProvider())
         }
-        if (isItemsAdderHooked && isSandalphonHooked) {
+        if (isSandalphonHooked && isItemsAdderHooked) {
             Sandalphon.registerItemAPI(ItemsAdderItemAPI())
         }
 

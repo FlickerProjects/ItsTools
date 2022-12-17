@@ -3,6 +3,9 @@ features:
   replacing_seed: 123456789
   # 移除锋利粒子效果
   remove_damage_indicator_particles: false
+  void_generator:
+    mobs: true
+    structures: false
 
 integrations:
   eco: true
@@ -14,7 +17,7 @@ integrations:
 # 快捷键
 shortcuts:
   # F/Q快捷键冷却
-  cooldown: 500 # ms
+  cooldown: '0.5s'
   # Shift+F
   sneak_swap: [ ]
   # 低头时F
@@ -27,6 +30,10 @@ shortcuts:
   down_drop: [ ]
   # 抬头时Q
   up_drop: [ ]
+  # 点击玩家
+  click_player: [ ]
+  # 潜行点击玩家
+  sneak_click_player: [ ]
 
 # 上传资源包
 automatically_upload:
@@ -44,7 +51,7 @@ automatically_upload:
     access_key_id: ~
     access_key_secret: ~
     bucket: ~
-    path: 'pack.zip'
+    key: 'pack.zip'
 
 # 资源包管理
 resource_packs:

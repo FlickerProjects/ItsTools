@@ -17,12 +17,10 @@ object CommandLight {
 
     val command = subCommand {
         literal("create") {
-            // type
             dynamic("type") {
                 suggestion<Player> { _, _ ->
                     listOf("SKY", "BLOCK", "BOTH")
                 }
-                // level
                 dynamic("level") {
                     suggestion<Player> { _, _ ->
                         (1..15).map { it.toString() }
@@ -42,7 +40,6 @@ object CommandLight {
             }
         }
         literal("delete") {
-            // type
             dynamic("type") {
                 suggestion<Player> { _, _ ->
                     listOf("SKY", "BLOCK", "BOTH")

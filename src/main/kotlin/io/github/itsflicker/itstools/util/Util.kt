@@ -2,12 +2,16 @@ package io.github.itsflicker.itstools.util
 
 import com.google.gson.JsonElement
 import com.google.gson.JsonParser
+import ink.ptms.zaphkiel.taboolib.common.reflect.Reflex.Companion.getProperty
 import io.github.itsflicker.itstools.api.NMS
 import io.github.itsflicker.itstools.conf
 import org.bukkit.Bukkit
 import taboolib.common.util.asList
 import taboolib.common.util.unsafeLazy
 import taboolib.common5.Baffle
+import taboolib.common5.Baffle.BaffleCounter
+import taboolib.common5.Baffle.BaffleTime
+import taboolib.common5.util.parseMillis
 import taboolib.library.configuration.Converter
 import taboolib.module.nms.nmsProxy
 import java.util.concurrent.TimeUnit
@@ -23,13 +27,21 @@ internal val isZaphkielHooked by unsafeLazy { Bukkit.getPluginManager().isPlugin
 
 fun String.parseJson(): JsonElement = jsonParser.parse(this)!!
 
-class BaffleConverter : Converter<Baffle, Long> {
-    override fun convertToField(value: Long): Baffle {
-        return Baffle.of(value, TimeUnit.MILLISECONDS)
+class BaffleConverter : Converter<Baffle, String> {
+    override fun convertToField(value: String): Baffle {
+        return if (value.endsWith('*')) {
+            Baffle.of(value.removeSuffix("*").toInt())
+        } else {
+            Baffle.of(value.parseMillis(), TimeUnit.MILLISECONDS)
+        }
     }
 
-    override fun convertFromField(value: Baffle): Long {
-        error("Not supported.")
+    override fun convertFromField(value: Baffle): String {
+        return when (value) {
+            is BaffleCounter -> value.getProperty<Int>("count")!!.toString() + "*"
+            is BaffleTime -> TimeUnit.MILLISECONDS.toSeconds(value.getProperty<Long>("millis")!!).toString() + "s"
+            else -> error("out of case")
+        }
     }
 }
 

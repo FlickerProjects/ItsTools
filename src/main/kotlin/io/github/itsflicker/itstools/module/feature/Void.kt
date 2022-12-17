@@ -1,5 +1,6 @@
 package io.github.itsflicker.itstools.module.feature
 
+import io.github.itsflicker.itstools.ItsTools
 import org.bukkit.HeightMap
 import org.bukkit.Location
 import org.bukkit.World
@@ -28,11 +29,11 @@ class Void : ChunkGenerator() {
     }
 
     override fun shouldGenerateMobs(): Boolean {
-        return true
+        return ItsTools.config.getBoolean("features.void_generator.mobs", true)
     }
 
     override fun shouldGenerateStructures(): Boolean {
-        return true
+        return ItsTools.config.getBoolean("features.void_generator.structures", false)
     }
 
 }

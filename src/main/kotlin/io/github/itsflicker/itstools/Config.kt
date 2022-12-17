@@ -48,6 +48,8 @@ class Shortcut(
     @Conversion(ArrayLikeConverter::class) val sneak_drop: Reaction = Reaction.EMPTY,
     @Conversion(ArrayLikeConverter::class) val down_drop: Reaction = Reaction.EMPTY,
     @Conversion(ArrayLikeConverter::class) val up_drop: Reaction = Reaction.EMPTY,
+    @Conversion(ArrayLikeConverter::class) val click_player: Reaction = Reaction.EMPTY,
+    @Conversion(ArrayLikeConverter::class) val sneak_click_player: Reaction = Reaction.EMPTY
 )
 
 class AutomaticallyUpload(
@@ -64,5 +66,9 @@ class COSUpload(
 )
 
 class OSSUpload(
-
+    val endpoint: String = "",
+    val access_key_id: String = "",
+    val access_key_secret: String = "",
+    val bucket: String = "",
+    val key: String = ""
 )

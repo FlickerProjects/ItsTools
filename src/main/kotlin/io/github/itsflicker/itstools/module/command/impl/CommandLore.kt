@@ -18,10 +18,9 @@ import taboolib.platform.util.modifyLore
 @Suppress("Deprecation")
 object CommandLore {
 
-    // itstools lore append/insert/pop <...>
+    // it lore append/insert/pop <...>
     val command = subCommand {
         literal("append") {
-            // text
             dynamic("text") {
                 execute<Player> { sender, _, argument ->
                     if (sender.itemInHand.isAir()) {
@@ -34,7 +33,6 @@ object CommandLore {
             }
         }
         literal("insert") {
-            // line
             dynamic("line") {
                 suggestion<Player>(uncheck = true) { sender, _ ->
                     (1..(sender.itemInHand.itemMeta?.lore?.size ?: 1)).map { it.toString() }
@@ -42,7 +40,6 @@ object CommandLore {
                 restrict<Player> { _, _, argument ->
                     Coerce.asInteger(argument).isPresent
                 }
-                // text
                 dynamic("text") {
                     execute<Player> { sender, context, argument ->
                         if (sender.itemInHand.isAir()) {
@@ -56,7 +53,6 @@ object CommandLore {
             }
         }
         literal("pop") {
-            // line
             dynamic("line", optional = true) {
                 restrict<Player> { _, _, argument ->
                     Coerce.asInteger(argument).isPresent

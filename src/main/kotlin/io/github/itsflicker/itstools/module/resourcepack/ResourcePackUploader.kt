@@ -4,6 +4,6 @@ import java.io.File
 
 interface ResourcePackUploader {
 
-    fun upload(file: File): Exception?
+    fun upload(file: File): Boolean
 
 }

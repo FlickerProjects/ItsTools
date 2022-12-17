@@ -3,6 +3,7 @@ package io.github.itsflicker.itstools.module.command.impl
 import dev.lone.itemsadder.api.ItemsAdder
 import io.github.itsflicker.itstools.conf
 import io.github.itsflicker.itstools.module.resourcepack.COSUploader
+import io.github.itsflicker.itstools.module.resourcepack.OSSUploader
 import io.github.itsflicker.itstools.module.resourcepack.ResourcePack
 import io.github.itsflicker.itstools.util.isItemsAdderHooked
 import io.github.itsflicker.itstools.util.isOraxenHooked
@@ -59,34 +60,44 @@ object CommandResourcePack {
 
     @CommandBody(permission = "itstools.command.resourcepack.upload")
     val upload = subCommand {
-        literal("cos") {
+        dynamic("type") {
+            suggest {
+                listOf("cos", "oss")
+            }
             dynamic("file") {
                 suggest {
-                    var array = newFile(getDataFolder(), "packs", folder = true).list()
-                    if (array != null && isItemsAdderHooked) {
+                    var array = newFile(getDataFolder(), "packs", folder = true).list()!!
+                    if (isItemsAdderHooked) {
                         array += "itemsadder"
                     }
-                    array?.toList()
+                    array.toList()
                 }
-                execute<CommandSender> { _, _, argument ->
-                    when (argument) {
+                execute<CommandSender> { sender, context, argument ->
+                    val file = when (argument) {
                         "itemsadder" -> {
-                            COSUploader.upload(getDataFolder()
+                            getDataFolder()
                                 .resolveSibling("ItemsAdder")
                                 .resolve("output")
-                                .resolve("generated.zip"))
+                                .resolve("generated.zip")
                         }
                         else -> {
-                            val file = getDataFolder().resolve("packs").resolve(argument)
-                            COSUploader.upload(file)
+                            getDataFolder().resolve("packs").resolve(argument)
                         }
+                    }
+                    val succeed = when (context.argument(-1)) {
+                        "cos" -> COSUploader.upload(file)
+                        "oss" -> OSSUploader.upload(file)
+                        else -> error("out of case")
+                    }
+                    if (succeed) {
+                        sender.sendMessage("§a上传成功!")
+                    } else {
+                        sender.sendMessage("§c上传失败!")
                     }
                 }
             }
         }
-        literal("oss") {
 
-        }
     }
 
     private fun send(player: Player, id: String) {
@@ -111,4 +122,5 @@ object CommandResourcePack {
         }
         ResourcePack.selected[player.uniqueId] = resourcePack
     }
+
 }

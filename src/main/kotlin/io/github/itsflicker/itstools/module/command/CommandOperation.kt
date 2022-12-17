@@ -3,7 +3,9 @@ package io.github.itsflicker.itstools.module.command
 import com.google.common.cache.Cache
 import com.google.common.cache.CacheBuilder
 import io.github.itsflicker.itstools.module.ai.BoatingAi
+import io.github.itsflicker.itstools.module.feature.DebugItem
 import io.github.itsflicker.itstools.util.nms
+import org.bukkit.Bukkit
 import org.bukkit.NamespacedKey
 import org.bukkit.entity.LivingEntity
 import org.bukkit.entity.Player
@@ -28,7 +30,9 @@ import java.util.function.Consumer
 @CommandHeader("itsoperation", ["io"], "ItsTools-Operations", permission = "itstools.access")
 object CommandOperation {
 
-    val cacheOperations: Cache<UUID, Consumer<LivingEntity>> = CacheBuilder.newBuilder().expireAfterWrite(10, TimeUnit.SECONDS).build()
+    val cacheOperations: Cache<UUID, Consumer<LivingEntity>> = CacheBuilder.newBuilder()
+        .expireAfterWrite(10, TimeUnit.SECONDS)
+        .build()
 
     @Suppress("Deprecation")
     @CommandBody(permission = "itstools.command.addpotion", optional = true)
@@ -142,6 +146,17 @@ object CommandOperation {
         }
     }
 
+    @CommandBody(permission = "itstools.command.settarget", optional = true)
+    val settarget = subCommand {
+        execute<Player> { sender, _, _ ->
+            cacheOperations.put(sender.uniqueId) { target ->
+                val entity = DebugItem.cache[sender.name]?.let { Bukkit.getEntity(it) as? LivingEntity } ?: return@put
+                nms.setTargetEntity(entity, target)
+            }
+            sender.sendMessage("§cClick an entity in the next 10 seconds.")
+        }
+    }
+
 //    @CommandBody(permission = "itstools.command.getentityuuid", optional = true)
 //    val getentityuuid = subCommand {
 //        execute<Player> { sender, _, _ ->
@@ -176,4 +191,5 @@ object CommandOperation {
     val main = mainCommand {
         createHelper()
     }
+
 }

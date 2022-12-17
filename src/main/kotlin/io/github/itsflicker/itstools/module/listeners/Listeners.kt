@@ -12,6 +12,7 @@ import org.bukkit.event.player.*
 import taboolib.common.platform.Ghost
 import taboolib.common.platform.event.EventPriority
 import taboolib.common.platform.event.SubscribeEvent
+import taboolib.platform.util.isMainhand
 
 /**
  * Listeners
@@ -76,11 +77,26 @@ object Listeners {
             }
             else if (view >= 80.0F && conf.shortcuts.down_drop != Reaction.EMPTY) {
                 e.isCancelled = true
-                conf.shortcuts.down_drop.eval(player) ?: return
+                conf.shortcuts.down_drop.eval(player)
             }
             else if (view <= -80.0F && conf.shortcuts.up_drop != Reaction.EMPTY) {
                 e.isCancelled = true
-                conf.shortcuts.up_drop.eval(player) ?: return
+                conf.shortcuts.up_drop.eval(player)
+            }
+        }
+    }
+
+    @SubscribeEvent(priority = EventPriority.HIGHEST, ignoreCancelled = true)
+    fun onInteract(e: PlayerInteractEntityEvent) {
+        if (e.isMainhand()) {
+            val clicked = e.rightClicked as? Player ?: return
+            val player = e.player
+            if (player.isSneaking && conf.shortcuts.sneak_click_player != Reaction.EMPTY) {
+                e.isCancelled = true
+                conf.shortcuts.sneak_click_player.eval(player, "clicked" to clicked.name)
+            } else if (conf.shortcuts.click_player != Reaction.EMPTY) {
+                e.isCancelled = true
+                conf.shortcuts.click_player.eval(player, "clicked" to clicked.name)
             }
         }
     }

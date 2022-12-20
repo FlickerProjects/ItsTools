@@ -78,7 +78,7 @@ object CommandOperation {
             sender.sendMessage("§cClick an entity in the next 10 seconds.")
         }
         dynamic("args", optional = true) {
-            suggestion<Player>(uncheck = true) { _, _ ->
+            suggestUncheck {
                 listOf("-d", "-s", "-t", "-p", "--f")
             }
             execute<Player> { sender, _, argument ->

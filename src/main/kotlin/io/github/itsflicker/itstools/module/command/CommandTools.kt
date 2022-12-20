@@ -6,10 +6,7 @@ import io.github.itsflicker.itstools.module.feature.DebugItem
 import org.bukkit.command.CommandSender
 import org.bukkit.entity.Player
 import taboolib.common.platform.ProxyCommandSender
-import taboolib.common.platform.command.CommandBody
-import taboolib.common.platform.command.CommandHeader
-import taboolib.common.platform.command.mainCommand
-import taboolib.common.platform.command.subCommand
+import taboolib.common.platform.command.*
 import taboolib.common.platform.function.getProxyPlayer
 import taboolib.common5.Demand
 import taboolib.expansion.createHelper
@@ -42,6 +39,20 @@ object CommandTools {
     @CommandBody(["rp"], optional = true)
     val resourcepack = CommandResourcePack
 
+    @CommandBody(permission = "itstools.command.forcechat", optional = true)
+    val forcechat = subCommand {
+        dynamic("player") {
+            suggestPlayers(allSymbol = true)
+            dynamic("message") {
+                execute<CommandSender> { _, context, argument ->
+                    context.playerFor(-1) {
+                        it.chat(argument)
+                    }
+                }
+            }
+        }
+    }
+
     @CommandBody(permission = "itstools.command.getdebugitem", optional = true)
     val getdebugitem = subCommand {
         execute<Player> { sender, _, _ ->
@@ -52,7 +63,7 @@ object CommandTools {
     @CommandBody(permission = "itstools.command.simplekether", optional = true)
     val simplekether = subCommand {
         dynamic("args") {
-            suggestion<ProxyCommandSender>(uncheck = true) { _, _ ->
+            suggestUncheck {
                 listOf("-source", "-namespace", "-sender")
             }
             execute<ProxyCommandSender> { sender, _, argument ->

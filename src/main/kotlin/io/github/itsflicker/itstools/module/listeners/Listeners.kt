@@ -5,6 +5,7 @@ import io.github.itsflicker.itstools.module.feature.DebugItem
 import io.github.itsflicker.itstools.module.feature.IPInfo
 import io.github.itsflicker.itstools.module.resourcepack.ResourcePack
 import io.github.itsflicker.itstools.module.script.Reaction
+import org.bukkit.World
 import org.bukkit.entity.Phantom
 import org.bukkit.entity.Player
 import org.bukkit.event.entity.CreatureSpawnEvent
@@ -24,15 +25,23 @@ import taboolib.platform.util.isMainhand
 @Suppress("unused")
 object Listeners {
 
-    fun quit(player: Player) {
+    private fun quit(player: Player) {
         ResourcePack.selected.remove(player.uniqueId)?.removed?.eval(player)
         DebugItem.cooldown.reset(player.name)
         IPInfo.caches.remove(player.uniqueId)
     }
 
+    private fun applyWorld(player: Player, world: World) {
+        val rp = conf.resource_packs.values.firstOrNull { world.name in it.worlds } ?: return
+        val previous = ResourcePack.selected[player.uniqueId]
+        if (previous != null && rp.id == previous.id) return
+        ResourcePack.send(player, rp.id)
+    }
+
     @SubscribeEvent
     fun onJoin(e: PlayerJoinEvent) {
         IPInfo.cacheFromCloud(e.player)
+        applyWorld(e.player, e.player.world)
     }
 
     @SubscribeEvent
@@ -134,6 +143,11 @@ object Listeners {
                 resourcePack.accepted.eval(player)
             }
         }
+    }
+
+    @SubscribeEvent
+    fun onWorldChanged(e: PlayerChangedWorldEvent) {
+        applyWorld(e.player, e.player.world)
     }
 
 }

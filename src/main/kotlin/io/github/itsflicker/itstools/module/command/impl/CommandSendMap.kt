@@ -1,12 +1,12 @@
 package io.github.itsflicker.itstools.module.command.impl
 
-import org.bukkit.Bukkit
 import org.bukkit.command.CommandSender
+import org.bukkit.entity.Player
+import taboolib.common.platform.command.playerFor
 import taboolib.common.platform.command.subCommand
 import taboolib.common.platform.command.suggestPlayers
 import taboolib.module.nms.sendMap
 import java.io.File
-import java.net.URL
 
 /**
  * @author wlys
@@ -17,25 +17,30 @@ object CommandSendMap {
     val command = subCommand {
         literal("file") {
             dynamic("player") {
-                suggestPlayers()
+                suggestPlayers(allSymbol = true)
                 dynamic("file") {
                     execute<CommandSender> { _, context, argument ->
-                        val player = Bukkit.getPlayer(context.argument(-1)) ?: return@execute
-                        player.sendMap(File(argument))
+                        context.playerFor(-1) {
+                            val player = it.cast<Player>()
+                            player.sendMap(File(argument))
+                        }
                     }
                 }
             }
         }
         literal("url") {
             dynamic("player") {
-                suggestPlayers()
+                suggestPlayers(allSymbol = true)
                 dynamic("url") {
                     execute<CommandSender> { _, context, argument ->
-                        val player = Bukkit.getPlayer(context.argument(-1)) ?: return@execute
-                        player.sendMap(URL(argument))
+                        context.playerFor(-1) {
+                            val player = it.cast<Player>()
+                            player.sendMap(File(argument))
+                        }
                     }
                 }
             }
         }
     }
+
 }

@@ -1,25 +1,17 @@
 package io.github.itsflicker.itstools.module.command.impl
 
-import dev.lone.itemsadder.api.ItemsAdder
 import io.github.itsflicker.itstools.conf
 import io.github.itsflicker.itstools.module.resourcepack.COSUploader
 import io.github.itsflicker.itstools.module.resourcepack.OSSUploader
 import io.github.itsflicker.itstools.module.resourcepack.ResourcePack
 import io.github.itsflicker.itstools.util.isItemsAdderHooked
-import io.github.itsflicker.itstools.util.isOraxenHooked
-import io.github.itsflicker.itstools.util.nms
-import io.th0rgal.oraxen.OraxenPlugin
-import org.bukkit.Bukkit
 import org.bukkit.command.CommandSender
 import org.bukkit.entity.Player
 import taboolib.common.io.newFile
 import taboolib.common.platform.ProxyCommandSender
-import taboolib.common.platform.command.CommandBody
-import taboolib.common.platform.command.subCommand
-import taboolib.common.platform.command.suggest
-import taboolib.common.platform.command.suggestPlayers
+import taboolib.common.platform.command.*
 import taboolib.common.platform.function.getDataFolder
-import taboolib.common.platform.function.warning
+import taboolib.common.platform.function.submitAsync
 
 /**
  * CommandResourcePack
@@ -37,7 +29,7 @@ object CommandResourcePack {
                 conf.resource_packs.filterValues { it.condition.eval(sender) }.keys.toList()
             }
             execute<Player> { sender, _, argument ->
-                send(sender, argument)
+                ResourcePack.send(sender, argument)
             }
         }
     }
@@ -45,14 +37,16 @@ object CommandResourcePack {
     @CommandBody(permission = "itstools.command.resourcepack.send")
     val send = subCommand {
         dynamic("player") {
-            suggestPlayers()
+            suggestPlayers(allSymbol = true)
             dynamic("id") {
                 suggest {
                     conf.resource_packs.keys.toList()
                 }
                 execute<ProxyCommandSender> { _, context, argument ->
-                    val player = Bukkit.getPlayer(context.argument(-1))!!
-                    send(player, argument)
+                    context.playerFor(-1) {
+                        val player = it.cast<Player>()
+                        ResourcePack.send(player, argument)
+                    }
                 }
             }
         }
@@ -84,43 +78,22 @@ object CommandResourcePack {
                             getDataFolder().resolve("packs").resolve(argument)
                         }
                     }
-                    val succeed = when (context.argument(-1)) {
-                        "cos" -> COSUploader.upload(file)
-                        "oss" -> OSSUploader.upload(file)
-                        else -> error("out of case")
-                    }
-                    if (succeed) {
-                        sender.sendMessage("§a上传成功!")
-                    } else {
-                        sender.sendMessage("§c上传失败!")
+                    submitAsync {
+                        val succeed = when (context.argument(-1)) {
+                            "cos" -> COSUploader.upload(file)
+                            "oss" -> OSSUploader.upload(file)
+                            else -> error("out of case")
+                        }
+                        if (succeed) {
+                            sender.sendMessage("§a上传成功!")
+                        } else {
+                            sender.sendMessage("§c上传失败!")
+                        }
                     }
                 }
             }
         }
 
-    }
-
-    private fun send(player: Player, id: String) {
-        val resourcePack = conf.resource_packs[id] ?: return
-        ResourcePack.selected.remove(player.uniqueId)?.removed?.eval(player)
-        when {
-            resourcePack.url.equals("itemsadder", ignoreCase = true) -> {
-                if (isItemsAdderHooked) {
-                    ItemsAdder.applyResourcepack(player)
-                } else {
-                    warning("ItemsAdder not loaded.")
-                }
-            }
-            resourcePack.url.equals("oraxen", ignoreCase = true) -> {
-                if (isOraxenHooked) {
-                    OraxenPlugin.get().uploadManager.sender.sendPack(player)
-                } else {
-                    warning("Oraxen not loaded.")
-                }
-            }
-            else -> nms.sendResourcePack(player, resourcePack.url, resourcePack.hash)
-        }
-        ResourcePack.selected[player.uniqueId] = resourcePack
     }
 
 }

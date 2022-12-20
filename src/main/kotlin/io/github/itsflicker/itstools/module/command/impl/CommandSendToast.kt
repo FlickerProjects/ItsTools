@@ -1,8 +1,9 @@
 package io.github.itsflicker.itstools.module.command.impl
 
-import org.bukkit.Bukkit
 import org.bukkit.Material
+import org.bukkit.entity.Player
 import taboolib.common.platform.ProxyCommandSender
+import taboolib.common.platform.command.playerFor
 import taboolib.common.platform.command.subCommand
 import taboolib.common.platform.command.suggest
 import taboolib.common.platform.command.suggestPlayers
@@ -21,7 +22,7 @@ object CommandSendToast {
 
     val command = subCommand {
         dynamic("player") {
-            suggestPlayers()
+            suggestPlayers(allSymbol = true)
             dynamic("frame") {
                 suggest {
                     ToastFrame.values().map { it.toString() }
@@ -32,12 +33,14 @@ object CommandSendToast {
                     }
                     dynamic("message") {
                         execute<ProxyCommandSender> { _, context, argument ->
-                            val player = Bukkit.getPlayer(context.argument(-3))
-                            player?.sendToast(
-                                Material.valueOf(context.argument(-1)),
-                                argument.colored(),
-                                ToastFrame.valueOf(context.argument(-2))
-                            )
+                            context.playerFor(-3) {
+                                val player = it.cast<Player>()
+                                player.sendToast(
+                                    Material.valueOf(context.argument(-1)),
+                                    argument.colored(),
+                                    ToastFrame.valueOf(context.argument(-2))
+                                )
+                            }
                         }
                     }
                 }

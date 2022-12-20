@@ -3,9 +3,17 @@ features:
   replacing_seed: 123456789
   # 移除锋利粒子效果
   remove_damage_indicator_particles: false
+  # 虚空生成器
   void_generator:
+    # 是否生成怪物
     mobs: true
+    # 是否提供结构
     structures: false
+  # 苦力怕爆炸替换为烟花
+  creeper_confetti:
+    enabled: false
+    # 最大特效个数
+    max_effects: 3
 
 integrations:
   eco: true
@@ -62,6 +70,8 @@ resource_packs:
     hash: '01517226212d27586ea0c5d6aff1aa5492dd2484'
     # 使用资源包条件
     condition: ~
+    # 自动使用世界
+    worlds: [ ]
     # 资源包成功加载后动作
     loaded: [ ]
     # 拒绝资源包后动作

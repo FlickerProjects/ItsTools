@@ -6,7 +6,14 @@ import ink.ptms.zaphkiel.taboolib.common.reflect.Reflex.Companion.getProperty
 import io.github.itsflicker.itstools.api.NMS
 import io.github.itsflicker.itstools.conf
 import org.bukkit.Bukkit
+import org.bukkit.Color
+import org.bukkit.FireworkEffect
+import org.bukkit.Location
+import org.bukkit.entity.EntityType
+import org.bukkit.entity.Firework
+import org.bukkit.entity.LivingEntity
 import taboolib.common.util.asList
+import taboolib.common.util.random
 import taboolib.common.util.unsafeLazy
 import taboolib.common5.Baffle
 import taboolib.common5.Baffle.BaffleCounter
@@ -26,6 +33,23 @@ internal val isSandalphonHooked by unsafeLazy { Bukkit.getPluginManager().isPlug
 internal val isZaphkielHooked by unsafeLazy { Bukkit.getPluginManager().isPluginEnabled("Zaphkiel") && conf.integrations.zaphkiel }
 
 fun String.parseJson(): JsonElement = jsonParser.parse(this)!!
+
+fun spawnRandomFirework(location: Location, fuse: Int, power: Int, maxEffects: Int = 1, owner: LivingEntity? = null) {
+    val firework = location.world!!.spawnEntity(location, EntityType.FIREWORK) as Firework
+    firework.attachedTo = owner
+    firework.fireworkMeta = firework.fireworkMeta.also {
+        it.power = power
+        repeat(random(1, maxEffects)) { _ ->
+            it.addEffect(FireworkEffect.builder().apply {
+                if (random(0.5)) withFlicker()
+                if (random(0.5)) withTrail()
+                withColor(Color.fromRGB(random(0, 255), random(0, 255), random(0, 255)))
+                withFade(Color.fromRGB(random(0, 255), random(0, 255), random(0, 255)))
+            }.build())
+        }
+    }
+    firework.maxLife = fuse
+}
 
 class BaffleConverter : Converter<Baffle, String> {
     override fun convertToField(value: String): Baffle {

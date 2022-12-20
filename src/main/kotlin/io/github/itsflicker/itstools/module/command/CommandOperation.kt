@@ -2,11 +2,9 @@ package io.github.itsflicker.itstools.module.command
 
 import com.google.common.cache.Cache
 import com.google.common.cache.CacheBuilder
-import io.github.itsflicker.itstools.module.ai.BoatingAi
 import io.github.itsflicker.itstools.module.feature.DebugItem
 import io.github.itsflicker.itstools.util.nms
 import org.bukkit.Bukkit
-import org.bukkit.NamespacedKey
 import org.bukkit.entity.LivingEntity
 import org.bukkit.entity.Player
 import org.bukkit.potion.PotionEffect
@@ -15,7 +13,10 @@ import taboolib.common.platform.command.*
 import taboolib.common5.Demand
 import taboolib.expansion.createHelper
 import taboolib.library.reflex.Reflex.Companion.invokeMethod
-import taboolib.module.ai.*
+import taboolib.module.ai.getGoalAi
+import taboolib.module.ai.getTargetAi
+import taboolib.module.ai.removeGoalAi
+import taboolib.module.ai.removeTargetAi
 import java.util.*
 import java.util.concurrent.TimeUnit
 import java.util.function.Consumer
@@ -34,17 +35,15 @@ object CommandOperation {
         .expireAfterWrite(10, TimeUnit.SECONDS)
         .build()
 
-    @Suppress("Deprecation")
     @CommandBody(permission = "itstools.command.addpotion", optional = true)
     val addpotion = subCommand {
         dynamic("potion") {
             suggest {
-                PotionEffectType.values().map { it.key.toString() }
+                PotionEffectType.values().map { it.name }
             }
             execute<Player> { sender, _, argument ->
-                val key = argument.split(':').let { NamespacedKey(it[0], it[1]) }
                 cacheOperations.put(sender.uniqueId) {
-                    it.addPotionEffect(PotionEffect(PotionEffectType.getByKey(key)!!, 30 * 20, 0))
+                    it.addPotionEffect(PotionEffect(PotionEffectType.getByName(argument)!!, 30 * 20, 0))
                 }
                 sender.sendMessage("§cClick an entity in the next 10 seconds.")
             }
@@ -53,7 +52,6 @@ object CommandOperation {
                     listOf("-d", "-a", "--ambient", "--p", "--i")
                 }
                 execute<Player> { sender, context, argument ->
-                    val key = context.argument(-1).split(':').let { NamespacedKey(it[0], it[1]) }
                     val de = Demand("potion $argument")
                     val duration = de.get(listOf("duration", "d"), "30")!!.toInt() * 20
                     val amplifier = de.get(listOf("amplifier", "a"), "1")!!.toInt().minus(1)
@@ -61,7 +59,7 @@ object CommandOperation {
                     val particles = de.tags.contains("p")
                     val icon = de.tags.contains("i")
                     cacheOperations.put(sender.uniqueId) {
-                        it.addPotionEffect(PotionEffect(PotionEffectType.getByKey(key)!!, duration, amplifier, ambient, particles, icon))
+                        it.addPotionEffect(PotionEffect(PotionEffectType.getByName(context.argument(-1))!!, duration, amplifier, ambient, particles, icon))
                     }
                     sender.sendMessage("§cClick an entity in the next 10 seconds.")
                 }
@@ -157,6 +155,16 @@ object CommandOperation {
         }
     }
 
+    @CommandBody(permission = "itstools.command.togglegravity", optional = true)
+    val togglegravity = subCommand {
+        execute<Player> { sender, _, _ ->
+            cacheOperations.put(sender.uniqueId) {
+                it.setGravity(!it.hasGravity())
+            }
+            sender.sendMessage("§cClick an entity in the next 10 seconds.")
+        }
+    }
+
 //    @CommandBody(permission = "itstools.command.getentityuuid", optional = true)
 //    val getentityuuid = subCommand {
 //        execute<Player> { sender, _, _ ->
@@ -167,25 +175,15 @@ object CommandOperation {
 //        }
 //    }
 
-    @CommandBody(permission = "admin", optional = true)
-    val test = subCommand {
-        execute<Player> { sender, _, _ ->
-            cacheOperations.put(sender.uniqueId) {
-                it.addGoalAi(BoatingAi(it), 1)
-            }
-            sender.sendMessage("§cClick an entity in the next 10 seconds.")
-        }
-    }
-
-    @CommandBody(permission = "admin", optional = true)
-    val test2 = subCommand {
-        execute<Player> { sender, _, _ ->
-            cacheOperations.put(sender.uniqueId) {
-                it.setGravity(!it.hasGravity())
-            }
-            sender.sendMessage("§cClick an entity in the next 10 seconds.")
-        }
-    }
+//    @CommandBody(permission = "admin", optional = true)
+//    val test = subCommand {
+//        execute<Player> { sender, _, _ ->
+//            cacheOperations.put(sender.uniqueId) {
+//                it.addGoalAi(BoatingAi(it), 1)
+//            }
+//            sender.sendMessage("§cClick an entity in the next 10 seconds.")
+//        }
+//    }
 
     @CommandBody
     val main = mainCommand {

@@ -76,7 +76,7 @@ object CommandTools {
         }
     }
 
-    @CommandBody(permission = "itstools.command.simplekether", optional = true)
+    @CommandBody(permission = "itstools.command.reload", optional = true)
     val reload = subCommand {
         execute<CommandSender> { _, _, _ ->
             ItsTools.reload()

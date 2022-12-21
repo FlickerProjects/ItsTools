@@ -26,7 +26,7 @@ object CreeperConfetti {
         if (!enabled) return
         val creeper = e.entity as? Creeper ?: return
         e.isCancelled = true
-        spawnRandomFirework(creeper.eyeLocation, 0, if (creeper.isPowered) 6 else 3, maxEffects, creeper)
+        spawnRandomFirework(creeper.eyeLocation, 1, if (creeper.isPowered) 6 else 3, maxEffects, creeper)
         spawnLingeringCloud(creeper)
         creeper.kill()
     }

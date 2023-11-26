@@ -3,6 +3,9 @@ package io.github.itsflicker.itstools.module.command
 import io.github.itsflicker.itstools.ItsTools
 import io.github.itsflicker.itstools.module.command.impl.*
 import io.github.itsflicker.itstools.module.feature.DebugItem
+import io.github.itsflicker.itstools.util.allSymbol
+import io.github.itsflicker.itstools.util.playerFor
+import io.github.itsflicker.itstools.util.spawnRandomFirework
 import org.bukkit.command.CommandSender
 import org.bukkit.entity.Player
 import taboolib.common.platform.ProxyCommandSender
@@ -13,6 +16,7 @@ import taboolib.expansion.createHelper
 import taboolib.module.kether.KetherShell
 import taboolib.module.kether.runKether
 import taboolib.platform.util.giveItem
+import taboolib.platform.util.toBukkitLocation
 
 /**
  * CommandHandler
@@ -39,13 +43,37 @@ object CommandTools {
     @CommandBody(["rp"], optional = true)
     val resourcepack = CommandResourcePack
 
+//    @CommandBody(optional = true)
+//    val timebar = subCommand {
+//
+//    }
+
+    @CommandBody(permission = "itstools.command.firework", optional = true)
+    val firework = subCommand {
+        location(euler = false) {
+            int("fuse") {
+                int("power") {
+                    int("maxEffects") {
+                        execute<CommandSender> { _, ctx, _ ->
+                            val location = ctx.location().toBukkitLocation()
+                            val fuse = ctx.int("fuse")
+                            val power = ctx.int("power")
+                            val maxEffects = ctx.int("maxEffects")
+                            spawnRandomFirework(location, fuse, power, maxEffects)
+                        }
+                    }
+                }
+            }
+        }
+    }
+
     @CommandBody(permission = "itstools.command.forcechat", optional = true)
     val forcechat = subCommand {
         dynamic("player") {
-            suggestPlayers(allSymbol = true)
+            suggestPlayers(allSymbol)
             dynamic("message") {
                 execute<CommandSender> { _, context, argument ->
-                    context.playerFor(-1) {
+                    context.playerFor {
                         it.chat(argument)
                     }
                 }

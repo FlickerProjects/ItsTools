@@ -2,14 +2,11 @@ package io.github.itsflicker.itstools
 
 import com.willfp.eco.core.items.Items
 import ink.ptms.sandalphon.Sandalphon
-import io.github.itsflicker.itstools.module.feature.IPInfo
 import io.github.itsflicker.itstools.module.feature.Void
 import io.github.itsflicker.itstools.module.integration.itemsadder.ItemsAdderItemAPI
 import io.github.itsflicker.itstools.module.integration.zaphkiel.ZaphkielItemProvider
-import io.github.itsflicker.itstools.util.isEcoHooked
-import io.github.itsflicker.itstools.util.isItemsAdderHooked
-import io.github.itsflicker.itstools.util.isSandalphonHooked
-import io.github.itsflicker.itstools.util.isZaphkielHooked
+import io.github.itsflicker.itstools.util.*
+import org.bukkit.Bukkit
 import org.bukkit.generator.ChunkGenerator
 import taboolib.common.env.RuntimeDependencies
 import taboolib.common.env.RuntimeDependency
@@ -21,6 +18,7 @@ import taboolib.module.configuration.Configuration
 import taboolib.module.configuration.Configuration.Companion.toObject
 import taboolib.module.metrics.Metrics
 import taboolib.platform.BukkitWorldGenerator
+import taboolib.platform.util.bukkitPlugin
 import taboolib.platform.util.onlinePlayers
 
 /**
@@ -46,6 +44,12 @@ object ItsTools : Plugin(), BukkitWorldGenerator {
         reload()
     }
 
+    override fun onEnable() {
+        if (!Bukkit.getMessenger().isOutgoingChannelRegistered(bukkitPlugin, "BungeeCord")) {
+            Bukkit.getMessenger().registerOutgoingPluginChannel(bukkitPlugin, "BungeeCord")
+        }
+    }
+
     override fun onActive() {
         Metrics(12296, pluginVersion, Platform.BUKKIT)
 
@@ -56,7 +60,14 @@ object ItsTools : Plugin(), BukkitWorldGenerator {
             Sandalphon.registerItemAPI(ItemsAdderItemAPI())
         }
 
-        onlinePlayers.forEach { IPInfo.cacheFromCloud(it) }
+//        onlinePlayers.forEach { IPInfo.cacheFromCloud(it) }
+    }
+
+    override fun onDisable() {
+        onlinePlayers.forEach {
+            nms.removeBossBar(it)
+        }
+        Bukkit.getMessenger().unregisterOutgoingPluginChannel(bukkitPlugin)
     }
 
     override fun getDefaultWorldGenerator(worldName: String, name: String?): ChunkGenerator {

@@ -2,14 +2,12 @@ package io.github.itsflicker.itstools.module.feature
 
 import io.github.itsflicker.itstools.util.parseJson
 import org.bukkit.entity.Player
-import taboolib.common.env.DependencyDownloader.readFully
 import taboolib.common.util.unsafeLazy
 import taboolib.module.configuration.Type
 import taboolib.module.configuration.createLocal
 import taboolib.module.configuration.util.getMap
 import java.io.BufferedInputStream
 import java.net.URL
-import java.nio.charset.StandardCharsets
 import java.util.*
 import java.util.concurrent.CompletableFuture
 
@@ -41,7 +39,7 @@ class IPInfo(
                     .getInputStream()
                     .use { inputStream ->
                         BufferedInputStream(inputStream).use { bufferedInputStream ->
-                            val json = readFully(bufferedInputStream, StandardCharsets.UTF_8).parseJson().asJsonObject
+                            val json = bufferedInputStream.bufferedReader().readText().parseJson().asJsonObject
                             if (json["code"].asInt != 200) {
                                 error("Query fail.")
                             }

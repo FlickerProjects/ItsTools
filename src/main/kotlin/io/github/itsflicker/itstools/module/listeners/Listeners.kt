@@ -3,6 +3,7 @@ package io.github.itsflicker.itstools.module.listeners
 import io.github.itsflicker.itstools.conf
 import io.github.itsflicker.itstools.module.feature.DebugItem
 import io.github.itsflicker.itstools.module.feature.IPInfo
+import io.github.itsflicker.itstools.module.integration.realisticseasons.RSTimeBar
 import io.github.itsflicker.itstools.module.resourcepack.ResourcePack
 import io.github.itsflicker.itstools.module.script.Reaction
 import org.bukkit.World
@@ -29,6 +30,7 @@ object Listeners {
         ResourcePack.selected.remove(player.uniqueId)?.removed?.eval(player)
         DebugItem.cooldown.reset(player.name)
         IPInfo.caches.remove(player.uniqueId)
+        RSTimeBar.created.remove(player.name)
     }
 
     private fun applyWorld(player: Player, world: World) {
@@ -40,7 +42,7 @@ object Listeners {
 
     @SubscribeEvent
     fun onJoin(e: PlayerJoinEvent) {
-        IPInfo.cacheFromCloud(e.player)
+//        IPInfo.cacheFromCloud(e.player)
         applyWorld(e.player, e.player.world)
     }
 

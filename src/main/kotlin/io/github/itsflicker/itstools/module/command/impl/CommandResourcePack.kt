@@ -4,12 +4,17 @@ import io.github.itsflicker.itstools.conf
 import io.github.itsflicker.itstools.module.resourcepack.COSUploader
 import io.github.itsflicker.itstools.module.resourcepack.OSSUploader
 import io.github.itsflicker.itstools.module.resourcepack.ResourcePack
+import io.github.itsflicker.itstools.util.allSymbol
 import io.github.itsflicker.itstools.util.isItemsAdderHooked
+import io.github.itsflicker.itstools.util.playerFor
 import org.bukkit.command.CommandSender
 import org.bukkit.entity.Player
 import taboolib.common.io.newFile
 import taboolib.common.platform.ProxyCommandSender
-import taboolib.common.platform.command.*
+import taboolib.common.platform.command.CommandBody
+import taboolib.common.platform.command.player
+import taboolib.common.platform.command.subCommand
+import taboolib.common.platform.command.suggest
 import taboolib.common.platform.function.getDataFolder
 import taboolib.common.platform.function.submitAsync
 
@@ -36,16 +41,14 @@ object CommandResourcePack {
 
     @CommandBody(permission = "itstools.command.resourcepack.send")
     val send = subCommand {
-        dynamic("player") {
-            suggestPlayers(allSymbol = true)
+        player(suggest = allSymbol) {
             dynamic("id") {
                 suggest {
                     conf.resource_packs.keys.toList()
                 }
-                execute<ProxyCommandSender> { _, context, argument ->
-                    context.playerFor(-1) {
-                        val player = it.cast<Player>()
-                        ResourcePack.send(player, argument)
+                execute<ProxyCommandSender> { _, ctx, argument ->
+                    ctx.playerFor {
+                        ResourcePack.send(it, argument)
                     }
                 }
             }
@@ -66,7 +69,7 @@ object CommandResourcePack {
                     }
                     array.toList()
                 }
-                execute<CommandSender> { sender, context, argument ->
+                execute<CommandSender> { sender, ctx, argument ->
                     val file = when (argument) {
                         "itemsadder" -> {
                             getDataFolder()
@@ -79,7 +82,7 @@ object CommandResourcePack {
                         }
                     }
                     submitAsync {
-                        val succeed = when (context.argument(-1)) {
+                        val succeed = when (ctx["type"]) {
                             "cos" -> COSUploader.upload(file)
                             "oss" -> OSSUploader.upload(file)
                             else -> error("out of case")

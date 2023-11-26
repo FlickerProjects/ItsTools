@@ -3,6 +3,7 @@ package io.github.itsflicker.itstools.module.feature
 import io.github.itsflicker.itstools.module.command.CommandOperation
 import io.github.itsflicker.itstools.module.feature.DebugItem.Mode.*
 import org.bukkit.Bukkit
+import org.bukkit.entity.EntityType
 import org.bukkit.entity.LivingEntity
 import org.bukkit.event.block.Action
 import org.bukkit.event.player.PlayerInteractEntityEvent
@@ -50,6 +51,8 @@ object DebugItem {
 
         NAVIGATE(1),
 
+        REMOVE_ARMOR_STAND(2)
+
     }
 
     val cache = ConcurrentHashMap<String, UUID>()
@@ -96,6 +99,7 @@ object DebugItem {
                     cache[player.name] = entity.uniqueId
                     player.sendMessage("&f${entity.uniqueId} &cCached.".colored())
                 }
+                else -> Unit
             }
             e.isCancelled = true
         }
@@ -122,11 +126,29 @@ object DebugItem {
     fun e(e: PlayerInteractEvent) {
         val player = e.player
         val item = player.inventory.itemInMainHand
-        if ((e.action == Action.RIGHT_CLICK_BLOCK || e.action == Action.RIGHT_CLICK_AIR) && isDebugItem(item) && getMode(item) == NAVIGATE) {
-            val entityUUID = cache[player.name] ?: return
-            val entity = Bukkit.getEntity(entityUUID) as? LivingEntity ?: return
-            entity.navigationMove(e.clickedBlock?.location ?: player.location, 1.0)
-            e.isCancelled = true
+        if (isDebugItem(item)) {
+            when (getMode(item)) {
+                NAVIGATE -> {
+                    if (e.action == Action.RIGHT_CLICK_BLOCK || e.action == Action.RIGHT_CLICK_AIR) {
+                        val entityUUID = cache[player.name] ?: return
+                        val entity = Bukkit.getEntity(entityUUID) as? LivingEntity ?: return
+                        entity.navigationMove(e.clickedBlock?.location ?: player.location, 1.0)
+                        e.isCancelled = true
+                    }
+                }
+                REMOVE_ARMOR_STAND -> {
+                    if (e.action == Action.RIGHT_CLICK_BLOCK) {
+                        val block = e.clickedBlock ?: return
+                        block.world.getNearbyEntities(block.location, 3.0, 3.0, 3.0) {
+                            it.type == EntityType.ARMOR_STAND
+                        }.forEach {
+                            it.remove()
+                        }
+                        e.isCancelled = true
+                    }
+                }
+                else -> Unit
+            }
         }
     }
 

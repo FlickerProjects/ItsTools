@@ -7,9 +7,7 @@ import io.github.itsflicker.itstools.module.script.Condition
 import io.github.itsflicker.itstools.module.script.Reaction
 import io.github.itsflicker.itstools.util.ArrayLikeConverter
 import io.github.itsflicker.itstools.util.isItemsAdderHooked
-import io.github.itsflicker.itstools.util.isOraxenHooked
 import io.github.itsflicker.itstools.util.nms
-import io.th0rgal.oraxen.OraxenPlugin
 import org.bukkit.entity.Player
 import taboolib.common.platform.function.warning
 import taboolib.library.configuration.Conversion
@@ -65,13 +63,13 @@ class ResourcePack(
                         warning("ItemsAdder not loaded.")
                     }
                 }
-                resourcePack.url.equals("oraxen", ignoreCase = true) -> {
-                    if (isOraxenHooked) {
-                        OraxenPlugin.get().uploadManager.sender.sendPack(player)
-                    } else {
-                        warning("Oraxen not loaded.")
-                    }
-                }
+//                resourcePack.url.equals("oraxen", ignoreCase = true) -> {
+//                    if (isOraxenHooked) {
+//                        OraxenPlugin.get().uploadManager.sender.sendPack(player)
+//                    } else {
+//                        warning("Oraxen not loaded.")
+//                    }
+//                }
                 else -> nms.sendResourcePack(player, resourcePack.url, resourcePack.hash)
             }
             selected[player.uniqueId] = resourcePack

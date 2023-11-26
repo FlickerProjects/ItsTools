@@ -25,10 +25,10 @@ object CommandLight {
                     suggestion<Player> { _, _ ->
                         (1..15).map { it.toString() }
                     }
-                    execute<Player> { sender, context, argument ->
+                    execute<Player> { sender, ctx, arg ->
                         sender.getTargetBlock(null, 50).createLight(
-                            argument.toInt(),
-                            when(context.argument(-1)) {
+                            arg.toInt(),
+                            when(ctx["type"]) {
                                 "SKY" -> LightType.SKY
                                 "BLOCK" -> LightType.BLOCK
                                 "BOTH" -> LightType.ALL
@@ -44,9 +44,9 @@ object CommandLight {
                 suggestion<Player> { _, _ ->
                     listOf("SKY", "BLOCK", "BOTH")
                 }
-                execute<Player> { sender, _, argument ->
+                execute<Player> { sender, _, arg ->
                     sender.getTargetBlock(null, 50).deleteLight(
-                        when(argument) {
+                        when(arg) {
                             "SKY" -> LightType.SKY
                             "BLOCK" -> LightType.BLOCK
                             "BOTH" -> LightType.ALL

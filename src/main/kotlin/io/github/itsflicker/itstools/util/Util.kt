@@ -1,5 +1,6 @@
 package io.github.itsflicker.itstools.util
 
+import com.google.common.io.ByteStreams
 import com.google.gson.JsonElement
 import com.google.gson.JsonParser
 import ink.ptms.zaphkiel.taboolib.common.reflect.Reflex.Companion.getProperty
@@ -12,6 +13,8 @@ import org.bukkit.Location
 import org.bukkit.entity.EntityType
 import org.bukkit.entity.Firework
 import org.bukkit.entity.LivingEntity
+import org.bukkit.plugin.messaging.PluginMessageRecipient
+import taboolib.common.platform.function.submitAsync
 import taboolib.common.util.asList
 import taboolib.common.util.random
 import taboolib.common.util.unsafeLazy
@@ -21,9 +24,12 @@ import taboolib.common5.Baffle.BaffleTime
 import taboolib.common5.util.parseMillis
 import taboolib.library.configuration.Converter
 import taboolib.module.nms.nmsProxy
+import taboolib.platform.util.bukkitPlugin
+import java.io.IOException
 import java.util.concurrent.TimeUnit
 
-val nms = nmsProxy<NMS>()
+val nms by lazy { nmsProxy<NMS>() }
+
 private val jsonParser = JsonParser()
 
 internal val isEcoHooked by unsafeLazy { Bukkit.getPluginManager().isPluginEnabled("eco") && conf.integrations.eco }
@@ -49,6 +55,20 @@ fun spawnRandomFirework(location: Location, fuse: Int, power: Int, maxEffects: I
         }
     }
     firework.maxLife = fuse
+}
+
+fun sendCommonPluginMessage(recipient: PluginMessageRecipient, vararg args: String) {
+    submitAsync {
+        val out = ByteStreams.newDataOutput()
+        try {
+            for (arg in args) {
+                out.writeUTF(arg)
+            }
+            recipient.sendPluginMessage(bukkitPlugin, "BungeeCord", out.toByteArray())
+        } catch (e: IOException) {
+            e.printStackTrace()
+        }
+    }
 }
 
 class BaffleConverter : Converter<Baffle, String> {

@@ -1,9 +1,11 @@
 package io.github.itsflicker.itstools.module.listeners
 
 import io.github.itsflicker.itstools.conf
+import org.bukkit.inventory.CraftingInventory
 import taboolib.common.platform.event.SubscribeEvent
 import taboolib.library.reflex.Reflex.Companion.invokeMethod
 import taboolib.module.nms.MinecraftVersion.majorLegacy
+import taboolib.module.nms.PacketReceiveEvent
 import taboolib.module.nms.PacketSendEvent
 
 /**
@@ -17,18 +19,27 @@ import taboolib.module.nms.PacketSendEvent
 object PacketListener {
 
     @SubscribeEvent
-    fun send(e: PacketSendEvent) {
+    fun patch0(e: PacketReceiveEvent) {
+        if (e.packet.name == "PacketPlayInUseItem" || e.packet.name == "PacketPlayInUseEntity" || e.packet.name == "PacketPlayInArmAnimation") {
+            if (e.player.openInventory.topInventory !is CraftingInventory) {
+                e.isCancelled = true
+            }
+        }
+    }
+
+    @SubscribeEvent
+    fun onSend(e: PacketSendEvent) {
         when (e.packet.name) {
             "PacketPlayOutLogin" -> {
                 if (majorLegacy >= 11700) {
-                    e.packet.write("seed", conf.features.replacing_seed)
+//                    e.packet.write("seed", conf.features.replacing_seed)
                 } else {
                     e.packet.write("b", conf.features.replacing_seed)
                 }
             }
             "PacketPlayOutRespawn" -> {
                 if (majorLegacy >= 11700) {
-                    e.packet.write("seed", conf.features.replacing_seed)
+//                    e.packet.write("seed", conf.features.replacing_seed)
                 } else {
                     e.packet.write("b", conf.features.replacing_seed)
                 }

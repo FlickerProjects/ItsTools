@@ -1,9 +1,9 @@
 package io.github.itsflicker.itstools.module.command.impl
 
 import org.bukkit.entity.Player
+import taboolib.common.platform.command.int
 import taboolib.common.platform.command.subCommand
 import taboolib.common.util.addSafely
-import taboolib.common5.Coerce
 import taboolib.module.chat.colored
 import taboolib.platform.util.isAir
 import taboolib.platform.util.modifyLore
@@ -22,51 +22,45 @@ object CommandLore {
     val command = subCommand {
         literal("append") {
             dynamic("text") {
-                execute<Player> { sender, _, argument ->
+                execute<Player> { sender, _, arg ->
                     if (sender.itemInHand.isAir()) {
                         return@execute
                     }
                     sender.itemInHand.modifyLore {
-                        add(argument.colored())
+                        add(arg.colored())
                     }
                 }
             }
         }
         literal("insert") {
-            dynamic("line") {
+            int("line") {
                 suggestion<Player>(uncheck = true) { sender, _ ->
                     (1..(sender.itemInHand.itemMeta?.lore?.size ?: 1)).map { it.toString() }
                 }
-                restrict<Player> { _, _, argument ->
-                    Coerce.asInteger(argument).isPresent
-                }
                 dynamic("text") {
-                    execute<Player> { sender, context, argument ->
+                    execute<Player> { sender, ctx, arg ->
                         if (sender.itemInHand.isAir()) {
                             return@execute
                         }
                         sender.itemInHand.modifyLore {
-                            addSafely(context.argument(-1).toInt() - 1, argument.colored(), "")
+                            addSafely(ctx.int("line") - 1, arg.colored(), "")
                         }
                     }
                 }
             }
         }
         literal("pop") {
-            dynamic("line", optional = true) {
-                restrict<Player> { _, _, argument ->
-                    Coerce.asInteger(argument).isPresent
-                }
-                execute<Player> { sender, _, argument ->
+            int("line", optional = true) {
+                execute<Player> { sender, _, arg ->
                     if (sender.itemInHand.isAir()) {
                         return@execute
                     }
                     sender.itemInHand.modifyLore {
                         try {
-                            sender.sendMessage("Removed lore: ${this.removeAt(argument.toInt()-1)}")
+                            sender.sendMessage("Removed lore: ${this.removeAt(arg.toInt()-1)}")
                         }
                         catch (e: IndexOutOfBoundsException) {
-                            sender.sendMessage("该物品第${argument}行没有Lore!")
+                            sender.sendMessage("该物品第${arg}行没有Lore!")
                         }
                     }
                 }

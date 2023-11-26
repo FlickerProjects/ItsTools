@@ -1,6 +1,9 @@
 package io.github.itsflicker.itstools.api
 
-import net.minecraft.network.protocol.game.PacketPlayOutResourcePackSend
+import net.minecraft.network.chat.IChatBaseComponent
+import net.minecraft.network.protocol.game.PacketPlayOutBoss
+import net.minecraft.server.level.BossBattleServer
+import net.minecraft.world.BossBattle
 import net.minecraft.world.entity.EntityCreature
 import net.minecraft.world.entity.EntityInsentient
 import net.minecraft.world.entity.EntityLiving
@@ -12,16 +15,19 @@ import net.minecraft.world.entity.ai.goal.PathfinderGoal
 import net.minecraft.world.entity.ai.goal.PathfinderGoalMeleeAttack
 import net.minecraft.world.entity.ai.goal.target.PathfinderGoalHurtByTarget
 import net.minecraft.world.entity.ai.goal.target.PathfinderGoalNearestAttackableTarget
-import org.bukkit.craftbukkit.v1_19_R2.CraftServer
-import org.bukkit.craftbukkit.v1_19_R2.entity.CraftEntity
+import org.bukkit.boss.BarColor
+import org.bukkit.boss.BarStyle
+import org.bukkit.craftbukkit.v1_20_R2.CraftServer
+import org.bukkit.craftbukkit.v1_20_R2.entity.CraftEntity
+import org.bukkit.craftbukkit.v1_20_R2.util.CraftChatMessage
 import org.bukkit.entity.LivingEntity
 import org.bukkit.entity.Player
 import taboolib.common.platform.function.warning
 import taboolib.library.reflex.Reflex.Companion.getProperty
 import taboolib.library.reflex.Reflex.Companion.invokeMethod
 import taboolib.library.reflex.Reflex.Companion.setProperty
-import taboolib.library.reflex.Reflex.Companion.unsafeInstance
 import taboolib.module.ai.pathfinderExecutor
+import taboolib.module.chat.ComponentText
 import taboolib.module.nms.MinecraftVersion
 import taboolib.module.nms.nmsClass
 import taboolib.module.nms.sendPacket
@@ -36,13 +42,7 @@ import taboolib.module.nms.sendPacket
 @Suppress("unused")
 class NMSImpl : NMS() {
 
-    override fun addGoalAi(entity: LivingEntity, priority: Int, pathfinderGoal: Any) {
-        entity.getEntityInsentient()?.goalSelector?.addGoal(priority, pathfinderGoal as PathfinderGoal)
-    }
-
-    override fun addTargetAi(entity: LivingEntity, priority: Int, pathfinderGoal: Any) {
-        entity.getEntityInsentient()?.targetSelector?.addGoal(priority, pathfinderGoal as PathfinderGoal)
-    }
+    lateinit var bossBarCache: BossBattle
 
     override fun getTargetEntity(entity: LivingEntity): LivingEntity? {
         val entityInsentient = entity.getEntityInsentient() ?: return null
@@ -76,21 +76,61 @@ class NMSImpl : NMS() {
 
     override fun sendResourcePack(player: Player, url: String, hash: String) {
         if (MinecraftVersion.isUniversal) {
-            player.sendPacket(PacketPlayOutResourcePackSend::class.java.unsafeInstance().also {
-                it.setProperty("url", url)
-                it.setProperty("hash", hash)
-                it.setProperty("required", false)
-            })
+            // TODO
+//            player.sendPacket(PacketPlayOutResourcePackSend(url, hash, false, null))
         } else {
-            player.sendPacket(PacketPlayOutResourcePackSend::class.java.unsafeInstance().also {
-                it.setProperty("a", url)
-                it.setProperty("b", hash)
-            })
+            player.sendPacket(net.minecraft.server.v1_16_R3.PacketPlayOutResourcePackSend(url, hash))
         }
+    }
+
+    override fun addBossBar(player: Player, name: ComponentText, color: BarColor, style: BarStyle) {
+        if (!::bossBarCache.isInitialized) {
+            bossBarCache = BossBattleServer(
+                craftChatMessageFromComponent(name),
+                BossBattle.BarColor.entries[color.ordinal],
+                BossBattle.BarStyle.entries[style.ordinal]
+            )
+        }
+        player.sendPacket(PacketPlayOutBoss.createAddPacket(bossBarCache))
+    }
+
+    override fun removeBossBar(player: Player) {
+        if (!::bossBarCache.isInitialized) return
+        player.sendPacket(PacketPlayOutBoss.createRemovePacket(bossBarCache.id))
+    }
+
+    override fun updateBossBar(player: Player, progress: Float) {
+        if (!::bossBarCache.isInitialized) return
+        bossBarCache.progress = progress
+        player.sendPacket(PacketPlayOutBoss.createUpdateProgressPacket(bossBarCache))
+    }
+
+    override fun updateBossBar(player: Player, name: ComponentText) {
+        if (!::bossBarCache.isInitialized) return
+        bossBarCache.setName(craftChatMessageFromComponent(name))
+        player.sendPacket(PacketPlayOutBoss.createUpdateNamePacket(bossBarCache))
+    }
+
+    override fun updateBossBar(player: Player, color: BarColor) {
+        if (!::bossBarCache.isInitialized) return
+        bossBarCache.setColor(BossBattle.BarColor.entries[color.ordinal])
+        player.sendPacket(PacketPlayOutBoss.createUpdateStylePacket(bossBarCache))
+    }
+
+    private fun craftChatMessageFromComponent(component: ComponentText): IChatBaseComponent {
+        return CraftChatMessage.fromJSON(component.toRawMessage())
     }
 
     private fun LivingEntity.getEntityInsentient(): EntityInsentient? {
         return pathfinderExecutor.getEntityInsentient(this) as? EntityInsentient
+    }
+
+    private fun addGoalAi(entity: LivingEntity, priority: Int, pathfinderGoal: Any) {
+        entity.getEntityInsentient()?.goalSelector?.addGoal(priority, pathfinderGoal as PathfinderGoal)
+    }
+
+    private fun addTargetAi(entity: LivingEntity, priority: Int, pathfinderGoal: Any) {
+        entity.getEntityInsentient()?.targetSelector?.addGoal(priority, pathfinderGoal as PathfinderGoal)
     }
 
 }

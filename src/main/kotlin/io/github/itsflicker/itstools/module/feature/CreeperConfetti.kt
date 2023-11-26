@@ -21,7 +21,7 @@ object CreeperConfetti {
     var maxEffects = 3
         private set
 
-    @SubscribeEvent(EventPriority.HIGHEST, ignoreCancelled = true)
+    @SubscribeEvent(priority = EventPriority.HIGHEST, ignoreCancelled = true)
     fun onExplode(e: EntityExplodeEvent) {
         if (!enabled) return
         val creeper = e.entity as? Creeper ?: return

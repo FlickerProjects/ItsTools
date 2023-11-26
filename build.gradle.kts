@@ -1,7 +1,7 @@
 plugins {
     `java-library`
-    id("io.izzel.taboolib") version "1.51"
-    id("org.jetbrains.kotlin.jvm") version "1.7.20"
+    id("io.izzel.taboolib") version "1.56"
+    id("org.jetbrains.kotlin.jvm") version "1.9.0"
 }
 
 taboolib {
@@ -32,29 +32,29 @@ taboolib {
     install("platform-bukkit")
     install("expansion-command-helper", "expansion-javascript")
     classifier = null
-    version = "6.0.10-31"
+    version = "6.0.12-35"
 }
 
 repositories {
+    mavenLocal()
     mavenCentral()
-//    mavenLocal()
     maven("https://jitpack.io")
     maven("https://repo.papermc.io/repository/maven-public/")
+    maven("https://repo.rosewooddev.io/repository/public/")
 }
 
 dependencies {
 //    compileOnly("public:ModelEngine:3.0.0")
     compileOnly("com.willfp:eco:6.35.1")
     compileOnly("com.github.LoneDev6:api-itemsadder:3.2.5")
-    compileOnly("com.github.oraxen:oraxen:-SNAPSHOT")
+//    compileOnly("com.github.oraxen:oraxen:-SNAPSHOT")
+    compileOnly("me.casperge:realisticseasons:8.1.3")
     compileOnly("ink.ptms:Zaphkiel:2.0.14")
 
+    compileOnly("ink.ptms.core:v12002:12002:mapped")
+    compileOnly("ink.ptms.core:v12002:12002:universal")
     compileOnly("ink.ptms:nms-all:1.0.0")
-    compileOnly("ink.ptms.core:v11903:11903:mapped")
-    compileOnly("ink.ptms.core:v11903:11903:universal")
 
-//    compileOnly("io.netty:netty-all:5.0.0.Alpha2")
-//    compileOnly("com.mojang:authlib:1.5.25")
     compileOnly("com.electronwill.night-config:core:3.6.5")
     compileOnly("com.google.code.gson:gson:2.9.0")
     compileOnly("com.google.guava:guava:31.1-jre")

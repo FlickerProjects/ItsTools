@@ -5,6 +5,7 @@ import com.google.common.cache.CacheBuilder
 import io.github.itsflicker.itstools.module.feature.DebugItem
 import io.github.itsflicker.itstools.util.nms
 import org.bukkit.Bukkit
+import org.bukkit.NamespacedKey
 import org.bukkit.entity.LivingEntity
 import org.bukkit.entity.Player
 import org.bukkit.potion.PotionEffect
@@ -39,11 +40,12 @@ object CommandOperation {
     val addpotion = subCommand {
         dynamic("potion") {
             suggest {
-                PotionEffectType.values().map { it.name }
+                PotionEffectType.values().map { it.key.key }
             }
-            execute<Player> { sender, _, argument ->
+            execute<Player> { sender, _, arg ->
+                val key = NamespacedKey.minecraft(arg)
                 cacheOperations.put(sender.uniqueId) {
-                    it.addPotionEffect(PotionEffect(PotionEffectType.getByName(argument)!!, 30 * 20, 0))
+                    it.addPotionEffect(PotionEffect(PotionEffectType.getByKey(key)!!, 30 * 20, 0))
                 }
                 sender.sendMessage("§cClick an entity in the next 10 seconds.")
             }
@@ -51,15 +53,16 @@ object CommandOperation {
                 suggest {
                     listOf("-d", "-a", "--ambient", "--p", "--i")
                 }
-                execute<Player> { sender, context, argument ->
-                    val de = Demand("potion $argument")
+                execute<Player> { sender, ctx, arg ->
+                    val key = NamespacedKey.minecraft(ctx["potion"])
+                    val de = Demand("potion $arg")
                     val duration = de.get(listOf("duration", "d"), "30")!!.toInt() * 20
                     val amplifier = de.get(listOf("amplifier", "a"), "1")!!.toInt().minus(1)
                     val ambient = de.tags.contains("ambient")
                     val particles = de.tags.contains("p")
                     val icon = de.tags.contains("i")
                     cacheOperations.put(sender.uniqueId) {
-                        it.addPotionEffect(PotionEffect(PotionEffectType.getByName(context.argument(-1))!!, duration, amplifier, ambient, particles, icon))
+                        it.addPotionEffect(PotionEffect(PotionEffectType.getByKey(key)!!, duration, amplifier, ambient, particles, icon))
                     }
                     sender.sendMessage("§cClick an entity in the next 10 seconds.")
                 }
@@ -79,8 +82,8 @@ object CommandOperation {
             suggestUncheck {
                 listOf("-d", "-s", "-t", "-p", "--f")
             }
-            execute<Player> { sender, _, argument ->
-                val de = Demand("0 $argument")
+            execute<Player> { sender, _, arg ->
+                val de = Demand("0 $arg")
                 val damage = de.get(listOf("damage", "d"))?.toDouble()
                 val speed = de.get(listOf("speed", "s"), "1.0")!!.toDouble()
                 val priority = de.get(listOf("priority", "p"), "2")!!.toInt()
@@ -97,9 +100,9 @@ object CommandOperation {
     @CommandBody(permission = "itstools.command.removegoal", optional = true)
     val removegoal = subCommand {
         dynamic("goal") {
-            execute<Player> { sender, _, argument ->
+            execute<Player> { sender, _, arg ->
                 cacheOperations.put(sender.uniqueId) {
-                    it.removeGoalAi(argument)
+                    it.removeGoalAi(arg)
                 }
                 sender.sendMessage("§cClick an entity in the next 10 seconds.")
             }
@@ -109,9 +112,9 @@ object CommandOperation {
     @CommandBody(permission = "itstools.command.removetarget", optional = true)
     val removetarget = subCommand {
         dynamic("target") {
-            execute<Player> { sender, _, argument ->
+            execute<Player> { sender, _, arg ->
                 cacheOperations.put(sender.uniqueId) {
-                    it.removeTargetAi(argument)
+                    it.removeTargetAi(arg)
                 }
                 sender.sendMessage("§cClick an entity in the next 10 seconds.")
             }

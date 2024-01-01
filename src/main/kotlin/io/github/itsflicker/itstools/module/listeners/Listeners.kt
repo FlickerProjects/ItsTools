@@ -3,7 +3,6 @@ package io.github.itsflicker.itstools.module.listeners
 import io.github.itsflicker.itstools.conf
 import io.github.itsflicker.itstools.module.feature.DebugItem
 import io.github.itsflicker.itstools.module.feature.IPInfo
-import io.github.itsflicker.itstools.module.integration.realisticseasons.RSTimeBar
 import io.github.itsflicker.itstools.module.resourcepack.ResourcePack
 import io.github.itsflicker.itstools.module.script.Reaction
 import org.bukkit.World
@@ -26,13 +25,6 @@ import taboolib.platform.util.isMainhand
 @Suppress("unused")
 object Listeners {
 
-    private fun quit(player: Player) {
-        ResourcePack.selected.remove(player.uniqueId)?.removed?.eval(player)
-        DebugItem.cooldown.reset(player.name)
-        IPInfo.caches.remove(player.uniqueId)
-        RSTimeBar.created.remove(player.name)
-    }
-
     private fun applyWorld(player: Player, world: World) {
         val rp = conf.resource_packs.values.firstOrNull { world.name in it.worlds } ?: return
         val previous = ResourcePack.selected[player.uniqueId]
@@ -42,18 +34,16 @@ object Listeners {
 
     @SubscribeEvent
     fun onJoin(e: PlayerJoinEvent) {
-//        IPInfo.cacheFromCloud(e.player)
+        IPInfo.cacheFromCloud(e.player)
         applyWorld(e.player, e.player.world)
     }
 
     @SubscribeEvent
     fun onQuit(e: PlayerQuitEvent) {
-        quit(e.player)
-    }
-
-    @SubscribeEvent
-    fun onKick(e: PlayerKickEvent) {
-        quit(e.player)
+        val player = e.player
+        ResourcePack.selected.remove(player.uniqueId)?.removed?.eval(player)
+        DebugItem.cooldown.reset(player.name)
+        IPInfo.caches.remove(player.uniqueId)
     }
 
     @Ghost
@@ -103,10 +93,8 @@ object Listeners {
             val clicked = e.rightClicked as? Player ?: return
             val player = e.player
             if (player.isSneaking && conf.shortcuts.sneak_click_player != Reaction.EMPTY) {
-                e.isCancelled = true
                 conf.shortcuts.sneak_click_player.eval(player, "clicked" to clicked.name)
             } else if (conf.shortcuts.click_player != Reaction.EMPTY) {
-                e.isCancelled = true
                 conf.shortcuts.click_player.eval(player, "clicked" to clicked.name)
             }
         }
@@ -144,6 +132,7 @@ object Listeners {
             PlayerResourcePackStatusEvent.Status.ACCEPTED -> {
                 resourcePack.accepted.eval(player)
             }
+            else -> { }
         }
     }
 

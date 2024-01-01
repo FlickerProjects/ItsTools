@@ -2,10 +2,14 @@ package io.github.itsflicker.itstools
 
 import com.willfp.eco.core.items.Items
 import ink.ptms.sandalphon.Sandalphon
+import io.github.itsflicker.itstools.module.feature.IPInfo
 import io.github.itsflicker.itstools.module.feature.Void
 import io.github.itsflicker.itstools.module.integration.itemsadder.ItemsAdderItemAPI
 import io.github.itsflicker.itstools.module.integration.zaphkiel.ZaphkielItemProvider
-import io.github.itsflicker.itstools.util.*
+import io.github.itsflicker.itstools.util.isEcoHooked
+import io.github.itsflicker.itstools.util.isItemsAdderHooked
+import io.github.itsflicker.itstools.util.isSandalphonHooked
+import io.github.itsflicker.itstools.util.isZaphkielHooked
 import org.bukkit.Bukkit
 import org.bukkit.generator.ChunkGenerator
 import taboolib.common.env.RuntimeDependencies
@@ -60,13 +64,10 @@ object ItsTools : Plugin(), BukkitWorldGenerator {
             Sandalphon.registerItemAPI(ItemsAdderItemAPI())
         }
 
-//        onlinePlayers.forEach { IPInfo.cacheFromCloud(it) }
+        onlinePlayers.forEach { IPInfo.cacheFromCloud(it) }
     }
 
     override fun onDisable() {
-        onlinePlayers.forEach {
-            nms.removeBossBar(it)
-        }
         Bukkit.getMessenger().unregisterOutgoingPluginChannel(bukkitPlugin)
     }
 

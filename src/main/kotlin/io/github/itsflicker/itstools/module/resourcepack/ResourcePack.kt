@@ -7,7 +7,6 @@ import io.github.itsflicker.itstools.module.script.Condition
 import io.github.itsflicker.itstools.module.script.Reaction
 import io.github.itsflicker.itstools.util.ArrayLikeConverter
 import io.github.itsflicker.itstools.util.isItemsAdderHooked
-import io.github.itsflicker.itstools.util.nms
 import org.bukkit.entity.Player
 import taboolib.common.platform.function.warning
 import taboolib.library.configuration.Conversion
@@ -24,7 +23,7 @@ import java.util.*
 class ResourcePack(
     val id: String = "",
     val url: String = "http://cdn.moep.tv/files/Empty.zip",
-    val hash: String = "01517226212d27586ea0c5d6aff1aa5492dd2484",
+    val hash: String? = "01517226212d27586ea0c5d6aff1aa5492dd2484",
     val condition: Condition = Condition.EMPTY,
     val worlds: ArrayList<String> = ArrayList(),
     @Conversion(ArrayLikeConverter::class) val loaded: Reaction = Reaction.EMPTY,
@@ -70,7 +69,9 @@ class ResourcePack(
 //                        warning("Oraxen not loaded.")
 //                    }
 //                }
-                else -> nms.sendResourcePack(player, resourcePack.url, resourcePack.hash)
+                else -> {
+                    player.setResourcePack(resourcePack.url, resourcePack.hash?.toByteArray())
+                }
             }
             selected[player.uniqueId] = resourcePack
         }

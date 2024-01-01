@@ -33,13 +33,14 @@ class IPInfo(
                 return
             }
             CompletableFuture.supplyAsync {
-                URL("https://ip.useragentinfo.com/json?ip=$ip")
+                URL("https://ip.useragentinfo.com/jsonp?ip=$ip")
                     .openConnection()
                     .also { it.connectTimeout = 30 * 1000 }
                     .getInputStream()
                     .use { inputStream ->
                         BufferedInputStream(inputStream).use { bufferedInputStream ->
-                            val json = bufferedInputStream.bufferedReader().readText().parseJson().asJsonObject
+                            val json = bufferedInputStream.bufferedReader().readText()
+                                .removePrefix("callback(").removeSuffix(");").parseJson().asJsonObject
                             if (json["code"].asInt != 200) {
                                 error("Query fail.")
                             }

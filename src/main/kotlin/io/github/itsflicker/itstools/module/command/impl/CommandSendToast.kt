@@ -25,11 +25,11 @@ object CommandSendToast {
             suggestPlayers(allSymbol)
             dynamic("frame") {
                 suggest {
-                    ToastFrame.values().map { it.toString() }
+                    ToastFrame.entries.map { it.toString() }
                 }
                 dynamic("material") {
                     suggest {
-                        Material.values().map { it.toString() }
+                        Material.entries.map { it.toString() }
                     }
                     dynamic("message") {
                         execute<ProxyCommandSender> { _, ctx, arg ->

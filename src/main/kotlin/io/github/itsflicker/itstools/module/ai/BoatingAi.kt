@@ -2,7 +2,6 @@ package io.github.itsflicker.itstools.module.ai
 
 import org.bukkit.entity.Boat
 import org.bukkit.entity.LivingEntity
-import org.bukkit.entity.Minecart
 import org.bukkit.util.Vector
 import taboolib.library.reflex.Reflex.Companion.getProperty
 import taboolib.module.ai.SimpleAi
@@ -11,21 +10,10 @@ import kotlin.properties.Delegates
 
 class BoatingAi(val entity: LivingEntity) : SimpleAi() {
 
-    private val empty = Vector()
-
     private var current: Vector? by Delegates.observable(null) { _, oldValue, newValue ->
-        if (oldValue == newValue && entity.vehicle?.velocity != empty) {
+        if (oldValue == newValue) {
             return@observable
         }
-//        if (newValue != null) {
-//            InstantVector.useToVanilla(
-//                entity.vehicle!!,
-//                newValue.x - entity.vehicle!!.location.x,
-//                newValue.y - entity.vehicle!!.location.y + 0.5,
-//                newValue.z - entity.vehicle!!.location.z,
-//                (newValue.distance(entity.vehicle!!.location.toVector()) / 2 * 20).toLong()
-//            )
-//        }
     }
 
     override fun startTask() {
@@ -37,7 +25,7 @@ class BoatingAi(val entity: LivingEntity) : SimpleAi() {
     }
 
     override fun shouldExecute(): Boolean {
-        return entity.vehicle is Boat || entity.vehicle is Minecart
+        return entity.vehicle is Boat
     }
 
     override fun continueExecute(): Boolean {

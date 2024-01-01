@@ -43,11 +43,6 @@ object CommandTools {
     @CommandBody(["rp"], optional = true)
     val resourcepack = CommandResourcePack
 
-//    @CommandBody(optional = true)
-//    val timebar = subCommand {
-//
-//    }
-
     @CommandBody(permission = "itstools.command.firework", optional = true)
     val firework = subCommand {
         location(euler = false) {

@@ -16,20 +16,9 @@ features:
     max_effects: 3
 
 integrations:
-  AttributeSystem:
-    vanilla-armor-transfer: false
   eco: true
   ItemsAdder: true
   Oraxen: true
-  RealisticSeasons:
-    timebar: false
-    text: "%rs_time% - %rs_year%年%rs_month%月%rs_day%日 - %rs_season%(%rs_days_until_next_season%)"
-    color:
-      spring: GREEN
-      summer: RED
-      fall: YELLOW
-      winter: BLUE
-    refresh_interval: 20
   Sandalphon: true
   Zaphkiel: true
 

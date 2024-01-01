@@ -59,7 +59,7 @@ object DebugItem {
 
     fun getMode(item: ItemStack): Mode {
         val index = item.getItemTag()["mode"]?.asInt() ?: return GET_ENTITY_UUID
-        return values()[index]
+        return entries[index]
     }
 
     fun setMode(item: ItemStack, mode: Mode) {
@@ -111,8 +111,8 @@ object DebugItem {
         val item = player.inventory.itemInMainHand.also { if (it.isAir()) return }
         if (isDebugItem(item)) {
             val mode = getMode(item).index
-            val newMode = if (mode < Mode.values().size - 1) mode + 1 else 0
-            setMode(item, values()[newMode].also {
+            val newMode = if (mode < entries.size - 1) mode + 1 else 0
+            setMode(item, entries[newMode].also {
                 item.modifyLore {
                     set(0, "&7当前模式: &f${it.name}".colored())
                 }

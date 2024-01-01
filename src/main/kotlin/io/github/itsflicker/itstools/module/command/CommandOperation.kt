@@ -2,6 +2,7 @@ package io.github.itsflicker.itstools.module.command
 
 import com.google.common.cache.Cache
 import com.google.common.cache.CacheBuilder
+import io.github.itsflicker.itstools.module.ai.EncircleAi
 import io.github.itsflicker.itstools.module.feature.DebugItem
 import io.github.itsflicker.itstools.util.nms
 import org.bukkit.Bukkit
@@ -14,10 +15,7 @@ import taboolib.common.platform.command.*
 import taboolib.common5.Demand
 import taboolib.expansion.createHelper
 import taboolib.library.reflex.Reflex.Companion.invokeMethod
-import taboolib.module.ai.getGoalAi
-import taboolib.module.ai.getTargetAi
-import taboolib.module.ai.removeGoalAi
-import taboolib.module.ai.removeTargetAi
+import taboolib.module.ai.*
 import java.util.*
 import java.util.concurrent.TimeUnit
 import java.util.function.Consumer
@@ -121,6 +119,26 @@ object CommandOperation {
         }
     }
 
+    @CommandBody(permission = "itstools.command.cleargoal", optional = true)
+    val cleargoal = subCommand {
+        execute<Player> { sender, _, _ ->
+            cacheOperations.put(sender.uniqueId) {
+                it.clearGoalAi()
+            }
+            sender.sendMessage("§cClick an entity in the next 10 seconds.")
+        }
+    }
+
+    @CommandBody(permission = "itstools.command.cleartarget", optional = true)
+    val cleartarget = subCommand {
+        execute<Player> { sender, _, _ ->
+            cacheOperations.put(sender.uniqueId) {
+                it.clearTargetAi()
+            }
+            sender.sendMessage("§cClick an entity in the next 10 seconds.")
+        }
+    }
+
     @CommandBody(permission = "itstools.command.getgoal", optional = true)
     val getgoal = subCommand {
         execute<Player> { sender, _, _ ->
@@ -178,15 +196,19 @@ object CommandOperation {
 //        }
 //    }
 
-//    @CommandBody(permission = "admin", optional = true)
-//    val test = subCommand {
-//        execute<Player> { sender, _, _ ->
-//            cacheOperations.put(sender.uniqueId) {
-//                it.addGoalAi(BoatingAi(it), 1)
-//            }
-//            sender.sendMessage("§cClick an entity in the next 10 seconds.")
-//        }
-//    }
+    @CommandBody(permission = "admin", optional = true)
+    val test = subCommand {
+        dynamic("distance") {
+            dynamic("speed") {
+                execute<Player> { sender, ctx, _ ->
+                    cacheOperations.put(sender.uniqueId) {
+                        it.addGoalAi(EncircleAi(it, ctx.double("distance"), ctx.double("speed")), 1)
+                    }
+                    sender.sendMessage("§cClick an entity in the next 10 seconds.")
+                }
+            }
+        }
+    }
 
     @CommandBody
     val main = mainCommand {

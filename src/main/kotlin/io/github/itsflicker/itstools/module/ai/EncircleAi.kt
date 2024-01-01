@@ -8,13 +8,13 @@ import kotlin.math.PI
 
 class EncircleAi(
     val entity: LivingEntity,
-    val distanceSqr: Double = 9.0,
+    val distance: Double = 3.0,
     val speed: Double = 1.0
 ) : SimpleAi() {
 
     override fun shouldExecute(): Boolean {
         val target = nms.getTargetEntity(entity) ?: return false
-        return entity.location.distanceSquared(target.location) <= distanceSqr
+        return entity.location.distance(target.location) <= distance
     }
 
     override fun startTask() {

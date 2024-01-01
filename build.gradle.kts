@@ -32,7 +32,7 @@ taboolib {
     install("platform-bukkit")
     install("expansion-command-helper", "expansion-javascript")
     classifier = null
-    version = "6.0.12-35"
+    version = "6.0.12-local"
 }
 
 repositories {
@@ -48,11 +48,10 @@ dependencies {
     compileOnly("com.willfp:eco:6.35.1")
     compileOnly("com.github.LoneDev6:api-itemsadder:3.2.5")
 //    compileOnly("com.github.oraxen:oraxen:-SNAPSHOT")
-    compileOnly("me.casperge:realisticseasons:8.1.3")
     compileOnly("ink.ptms:Zaphkiel:2.0.14")
 
-    compileOnly("ink.ptms.core:v12002:12002:mapped")
-    compileOnly("ink.ptms.core:v12002:12002:universal")
+    compileOnly("ink.ptms.core:v12004:12004:mapped")
+    compileOnly("ink.ptms.core:v12004:12004:universal")
     compileOnly("ink.ptms:nms-all:1.0.0")
 
     compileOnly("com.electronwill.night-config:core:3.6.5")

@@ -4,25 +4,19 @@ import net.minecraft.network.chat.IChatBaseComponent
 import net.minecraft.world.entity.EntityCreature
 import net.minecraft.world.entity.EntityInsentient
 import net.minecraft.world.entity.EntityLiving
-import net.minecraft.world.entity.ai.attributes.AttributeBase
-import net.minecraft.world.entity.ai.attributes.AttributeMapBase
-import net.minecraft.world.entity.ai.attributes.AttributeModifiable
 import net.minecraft.world.entity.ai.attributes.GenericAttributes
 import net.minecraft.world.entity.ai.goal.PathfinderGoal
 import net.minecraft.world.entity.ai.goal.PathfinderGoalMeleeAttack
 import net.minecraft.world.entity.ai.goal.target.PathfinderGoalHurtByTarget
 import net.minecraft.world.entity.ai.goal.target.PathfinderGoalNearestAttackableTarget
-import net.minecraft.world.entity.ai.navigation.NavigationAbstract
 import org.bukkit.Location
-import org.bukkit.craftbukkit.v1_20_R3.CraftServer
-import org.bukkit.craftbukkit.v1_20_R3.entity.CraftEntity
-import org.bukkit.craftbukkit.v1_20_R3.util.CraftChatMessage
+import org.bukkit.craftbukkit.v1_21_R5.CraftServer
+import org.bukkit.craftbukkit.v1_21_R5.entity.CraftEntity
+import org.bukkit.craftbukkit.v1_21_R5.util.CraftChatMessage
 import org.bukkit.entity.LivingEntity
 import taboolib.common.platform.function.warning
-import taboolib.library.reflex.Reflex.Companion.getProperty
 import taboolib.library.reflex.Reflex.Companion.invokeMethod
 import taboolib.library.reflex.Reflex.Companion.setProperty
-import taboolib.module.ai.pathfinderExecutor
 import taboolib.module.chat.ComponentText
 import taboolib.module.nms.nmsClass
 
@@ -40,8 +34,16 @@ class NMSImpl : NMS() {
         return CraftChatMessage.fromJSON(component.toRawMessage())
     }
 
+    private fun LivingEntity.getEntityLiving(): EntityLiving? {
+        return (this as CraftEntity).handle as? EntityLiving
+    }
+
     private fun LivingEntity.getEntityInsentient(): EntityInsentient? {
-        return pathfinderExecutor.getEntityInsentient(this) as? EntityInsentient
+        return (this as CraftEntity).handle as? EntityInsentient
+    }
+
+    private fun LivingEntity.getEntityCreature(): EntityCreature? {
+        return (this as CraftEntity).handle as? EntityCreature
     }
 
     private fun addGoalAi(entity: LivingEntity, priority: Int, pathfinderGoal: Any) {
@@ -59,9 +61,10 @@ class NMSImpl : NMS() {
     }
 
     override fun setTargetEntity(entity: LivingEntity, target: LivingEntity?) {
-        val entityInsentient = entity.getEntityInsentient() ?: return
-        // Unknown target reason, please report on the issue tracker
-        entityInsentient.setProperty("target", target?.getEntityInsentient())
+        val entityInsentient = entity.getEntityInsentient()
+            ?: return warning("${entity.type} is not EntityInsentient.")
+        // setTarget -> Unknown target reason, please report on the issue tracker
+        entityInsentient.setProperty("target", target?.getEntityLiving())
     }
 
     override fun getSpeed(entity: LivingEntity): Double {
@@ -69,27 +72,22 @@ class NMSImpl : NMS() {
     }
 
     override fun getTargetLocation(entity: LivingEntity): Location? {
-        val navigation = entity.getEntityInsentient()!!.getProperty<NavigationAbstract>("navigation")!!
+        val navigation = entity.getEntityInsentient()!!.navigation
         return navigation.path?.endNode?.let { Location(entity.world, it.x.toDouble(), it.y.toDouble(), it.z.toDouble()) }
     }
 
     override fun makeMeleeHostile(entity: LivingEntity, damage: Double?, speed: Double, priority: Int, type: String, followingTargetEvenIfNotSeen: Boolean) {
-        val entityInsentient = entity.getEntityInsentient()
-            ?: return warning("${entity.type} is not EntityInsentient.")
+        val entityCreature = entity.getEntityCreature()
+            ?: return warning("${entity.type} is not EntityCreature.")
         if (damage != null) {
-            val map = entityInsentient.invokeMethod<AttributeMapBase>("getAttributes")!!
-            // add generic:attack_damage attribute
-            map.getProperty<HashMap<AttributeBase, AttributeModifiable>>("b")!![GenericAttributes.ATTACK_DAMAGE] =
-                AttributeModifiable(GenericAttributes.ATTACK_DAMAGE) { map.invokeMethod<Void>("a", it) }
-            // set entity damage
-            entityInsentient.invokeMethod<AttributeModifiable>("getAttribute", GenericAttributes.ATTACK_DAMAGE)!!
-                .invokeMethod<Void>("a", damage)
+            entityCreature.attributes.invokeMethod<Void>("registerAttribute", GenericAttributes.ATTACK_DAMAGE)
+            entityCreature.getAttribute(GenericAttributes.ATTACK_DAMAGE)!!.baseValue = damage
         }
         // add goal selector
-        addGoalAi(entity, priority, PathfinderGoalMeleeAttack(entityInsentient as EntityCreature, speed, followingTargetEvenIfNotSeen))
+        addGoalAi(entity, priority, PathfinderGoalMeleeAttack(entityCreature, speed, followingTargetEvenIfNotSeen))
         // add target selector
-        addTargetAi(entity, 1, PathfinderGoalHurtByTarget(entityInsentient))
-        addTargetAi(entity, 2, PathfinderGoalNearestAttackableTarget(entityInsentient, nmsClass(type).asSubclass(EntityLiving::class.java), true))
+        addTargetAi(entity, 1, PathfinderGoalHurtByTarget(entityCreature))
+        addTargetAi(entity, 2, PathfinderGoalNearestAttackableTarget(entityCreature, nmsClass(type).asSubclass(EntityLiving::class.java), true))
     }
 
 }

@@ -17,6 +17,7 @@ import taboolib.common.env.RuntimeDependency
 import taboolib.common.platform.Platform
 import taboolib.common.platform.Plugin
 import taboolib.common.platform.function.pluginVersion
+import taboolib.module.configuration.Config
 import taboolib.module.configuration.Configuration
 import taboolib.module.configuration.Configuration.Companion.toObject
 import taboolib.module.metrics.Metrics
@@ -38,7 +39,7 @@ import taboolib.platform.util.onlinePlayers
 )
 object ItsTools : Plugin(), BukkitWorldGenerator {
 
-    @Config(autoReload = true)
+    @Config
     lateinit var config: Configuration
         private set
 

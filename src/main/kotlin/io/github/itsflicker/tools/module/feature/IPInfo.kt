@@ -4,7 +4,7 @@ import io.github.itsflicker.tools.util.parseJson
 import org.bukkit.entity.Player
 import taboolib.common.util.unsafeLazy
 import taboolib.module.configuration.Type
-import taboolib.module.configuration.createLocal
+import taboolib.module.configuration.createTempData
 import taboolib.module.configuration.util.getMap
 import java.io.BufferedInputStream
 import java.net.URL
@@ -22,7 +22,7 @@ class IPInfo(
 
     companion object {
 
-        val local by unsafeLazy { createLocal("ipcaches.json", type = Type.FAST_JSON) }
+        val local by unsafeLazy { createTempData("ipcaches.json", type = Type.JSON_MINIMAL) }
         val caches = mutableMapOf<UUID, IPInfo>()
 
         fun cacheFromCloud(player: Player, retryTime: Int = 3) {
@@ -33,23 +33,22 @@ class IPInfo(
                 return
             }
             CompletableFuture.supplyAsync {
-                URL("https://ip.useragentinfo.com/jsonp?ip=$ip")
+                URL("http://ip-api.com/json/$ip?lang=zh-CN")
                     .openConnection()
                     .also { it.connectTimeout = 30 * 1000 }
                     .getInputStream()
                     .use { inputStream ->
                         BufferedInputStream(inputStream).use { bufferedInputStream ->
-                            val json = bufferedInputStream.bufferedReader().readText()
-                                .removePrefix("callback(").removeSuffix(");").parseJson().asJsonObject
-                            if (json["code"].asInt != 200) {
+                            val json = bufferedInputStream.bufferedReader().readText().parseJson().asJsonObject
+                            if (json["status"]?.asString != "success") {
                                 error("Query fail.")
                             }
                             local[key] = mapOf(
                                 "country" to json["country"].asString,
-                                "short_name" to json["short_name"].asString,
-                                "province" to json["province"].asString,
-                                "city" to json["country"].asString,
-                                "area" to json["area"].asString,
+                                "short_name" to json["countryCode"].asString,
+                                "province" to json["regionName"].asString,
+                                "city" to json["city"].asString,
+                                "area" to json["city"].asString,
                                 "isp" to json["isp"].asString,
                             )
                             loadFromLocal(player.uniqueId, key)

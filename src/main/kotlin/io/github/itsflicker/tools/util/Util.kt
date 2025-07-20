@@ -3,7 +3,6 @@ package io.github.itsflicker.tools.util
 import com.google.common.io.ByteStreams
 import com.google.gson.JsonElement
 import com.google.gson.JsonParser
-import ink.ptms.zaphkiel.taboolib.common.reflect.Reflex.Companion.getProperty
 import io.github.itsflicker.tools.api.NMS
 import io.github.itsflicker.tools.conf
 import org.bukkit.Bukkit
@@ -23,6 +22,7 @@ import taboolib.common5.Baffle.BaffleCounter
 import taboolib.common5.Baffle.BaffleTime
 import taboolib.common5.util.parseMillis
 import taboolib.library.configuration.Converter
+import taboolib.library.reflex.Reflex.Companion.getProperty
 import taboolib.module.nms.nmsProxy
 import taboolib.platform.util.bukkitPlugin
 import java.io.IOException
@@ -41,7 +41,7 @@ internal val isZaphkielHooked by unsafeLazy { Bukkit.getPluginManager().isPlugin
 fun String.parseJson(): JsonElement = jsonParser.parse(this)!!
 
 fun spawnRandomFirework(location: Location, fuse: Int, power: Int, maxEffects: Int = 1, owner: LivingEntity? = null) {
-    val firework = location.world!!.spawnEntity(location, EntityType.FIREWORK) as Firework
+    val firework = location.world!!.spawnEntity(location, EntityType.FIREWORK_ROCKET) as Firework
     firework.attachedTo = owner
     firework.fireworkMeta = firework.fireworkMeta.also {
         it.power = power

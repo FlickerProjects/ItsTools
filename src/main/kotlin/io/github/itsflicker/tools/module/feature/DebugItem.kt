@@ -5,6 +5,7 @@ import io.github.itsflicker.tools.module.feature.DebugItem.Mode.*
 import org.bukkit.Bukkit
 import org.bukkit.entity.EntityType
 import org.bukkit.entity.LivingEntity
+import org.bukkit.entity.Player
 import org.bukkit.event.block.Action
 import org.bukkit.event.player.PlayerInteractEntityEvent
 import org.bukkit.event.player.PlayerInteractEvent
@@ -78,52 +79,20 @@ object DebugItem {
         component.saveTo(item)
     }
 
-    @SubscribeEvent
-    fun e(e: PlayerInteractEntityEvent) {
+    @SubscribeEvent(priority = EventPriority.LOWEST)
+    fun onOperation(e: PlayerInteractEntityEvent) {
         val entity = e.rightClicked as? LivingEntity ?: return
         val player = e.player
         val operation = CommandOperation.cacheOperations.getIfPresent(player.uniqueId)
         if (operation != null) {
             operation.accept(entity)
             CommandOperation.cacheOperations.invalidate(player.uniqueId)
-            return
-        }
-        val item = player.inventory.itemInMainHand
-        if (isDebugItem(item) && cooldown.hasNext(player.name)) {
-            when (getMode(item)) {
-                GET_ENTITY_UUID -> {
-                    cache[player.name] = entity.uniqueId
-                    player.sendMessage("&cUUID: &f${entity.uniqueId}".colored())
-                }
-                NAVIGATE -> {
-                    cache[player.name] = entity.uniqueId
-                    player.sendMessage("&f${entity.uniqueId} &cCached.".colored())
-                }
-                else -> Unit
-            }
             e.isCancelled = true
         }
     }
 
-    @SubscribeEvent
-    fun e(e: PlayerSwapHandItemsEvent) {
-        val player = e.player
-        val item = player.inventory.itemInMainHand.also { if (it.isAir()) return }
-        if (isDebugItem(item)) {
-            val mode = getMode(item).index
-            val newMode = if (mode < entries.size - 1) mode + 1 else 0
-            setMode(item, entries[newMode].also {
-                item.modifyLore {
-                    set(0, "&7当前模式: &f${it.name}".colored())
-                }
-                adaptPlayer(player).sendActionBar("§cCurrent mode: ${it.name}")
-            })
-            e.isCancelled = true
-        }
-    }
-
-    @SubscribeEvent(priority = EventPriority.LOWEST)
-    fun e(e: PlayerInteractEvent) {
+    @SubscribeEvent(priority = EventPriority.LOW, ignoreCancelled = true)
+    fun onInteract(e: PlayerInteractEvent) {
         val player = e.player
         val item = player.inventory.itemInMainHand
         if (isDebugItem(item)) {
@@ -147,8 +116,47 @@ object DebugItem {
                         e.isCancelled = true
                     }
                 }
-                else -> Unit
+                else -> {}
             }
+        }
+    }
+
+    @SubscribeEvent(priority = EventPriority.NORMAL, ignoreCancelled = true)
+    fun onInteractEntity(e: PlayerInteractEntityEvent) {
+        val entity = e.rightClicked as? LivingEntity ?: return
+        val player = e.player
+        val item = player.inventory.itemInMainHand
+        if (isDebugItem(item) && cooldown.hasNext(player.name)) {
+            e.isCancelled = true
+            when (getMode(item)) {
+                GET_ENTITY_UUID -> {
+                    cache[player.name] = entity.uniqueId
+                    player.sendMessage("&cUUID: &f${entity.uniqueId}".colored())
+                }
+                NAVIGATE -> {
+                    if (entity is Player) return
+                    cache[player.name] = entity.uniqueId
+                    player.sendMessage("&f${entity.uniqueId} &cCached.".colored())
+                }
+                else -> {}
+            }
+        }
+    }
+
+    @SubscribeEvent
+    fun onSwapHand(e: PlayerSwapHandItemsEvent) {
+        val player = e.player
+        val item = player.inventory.itemInMainHand.also { if (it.isAir()) return }
+        if (isDebugItem(item)) {
+            val mode = getMode(item).index
+            val newMode = if (mode < entries.size - 1) mode + 1 else 0
+            setMode(item, entries[newMode].also {
+                item.modifyLore {
+                    set(0, "&7当前模式: &f${it.name}".colored())
+                }
+                adaptPlayer(player).sendActionBar("§cCurrent mode: ${it.name}")
+            })
+            e.isCancelled = true
         }
     }
 
